@@ -39,12 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 自定义视图
+    # 自定义APP
     'stackOverFlow.homeapplication.apps.HomeapplicationConfig',
     # 第三方
     'rest_framework',  # DRF架构
     'corsheaders',  # 解决跨域CORS
-    'rest_framework_simplejwt'  # JWT
+    'rest_framework_simplejwt',  # JWT
+    'drf_yasg',  # swagger
 ]
 
 MIDDLEWARE = [
