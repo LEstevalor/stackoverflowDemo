@@ -41,10 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 自定义视图
     'stackOverFlow.homeapplication.apps.HomeapplicationConfig',
-    # 'users.apps.UsersConfig',  # 用户
-    # 'questions.apps.QuestionsConfig',  # 帖子模块
-    # 'back_questions.apps.BackQuestionsConfig',  # 回帖模块
-    # 'follow_questions.apps.FollowQuestionsConfig',  # 跟帖模块
     # 第三方
     'rest_framework',  # DRF架构
     'corsheaders',  # 解决跨域CORS
