@@ -29,6 +29,7 @@ class MyTokenObtainPairSerializer(TokenObtainSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = "__all__"
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
