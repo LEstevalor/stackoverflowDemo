@@ -62,11 +62,6 @@ export default new Router({
           component: () => import('../components/user.vue')
         },
         {
-          path: '/setting',
-          name: 'index.setting',
-          component: () => import('../components/setting.vue')
-        },
-        {
           path: '/logs',
           name: 'index.logs',
           component: () => import('../components/log.vue')
