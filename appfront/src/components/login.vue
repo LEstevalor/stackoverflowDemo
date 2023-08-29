@@ -14,12 +14,12 @@
         <form>
           <h1 style='text-align: center;color: aliceblue;'>WELCOME TO GDUT DBA</h1>
           <p>账 号: <input id='username' v-model="username" type='text'>
-            <span v-bk-tooltips.top-start="'学号或职工号为账号或邮箱'" class='top-start'>
+            <span v-bk-tooltips.top-start="'学号为账号或邮箱'" class='top-start'>
                 <i class='bk-icon icon-info-circle-shape'></i>
             </span>
           </p>
           <p>密 码: <input id='password' v-model="password" type='password'>
-            <span v-bk-tooltips.top-start="'忘记密码请寻找admin管理员'" class='top-start'>
+            <span v-bk-tooltips.top-start="'忘记密码请找管理员'" class='top-start'>
                 <i class='bk-icon icon-info-circle-shape'></i>
             </span>
           </p>
@@ -32,7 +32,7 @@
       </div>
       <div v-show='page==="register"' class='login-modal' id='loginDiv2'>
         <form>
-          <h1 style='text-align: center;color: aliceblue;'>WELCOME TO GDUT DBA</h1>
+          <h1 style='text-align: center;color: aliceblue;'> WELCOME TO GDUT </h1>
           <p>  账 号: <input id='username2' v-model="username" type='text'></p>
           <p>  密 码: <input id='password2' v-model="password" type='password'></p>
           <p>重输密码: <input id='password22' v-model="password2" type='password'></p>

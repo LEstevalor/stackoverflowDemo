@@ -23,6 +23,8 @@ urlpatterns = [
     # 登录注册
     re_path(r'^api/v1/user/login/$', users.LoginTokenView.as_view(), name='token_obtain_pair'),  # JWT登录功能
     re_path(r'^api/v1/user/register/$', users.RegisterUserView.as_view()),  # 注册功能
+    re_path(r'^api/v1/user/unique/$', users.UniqueView.as_view()),  # 检查账号或邮箱是否注册过
+    re_path(r'^api/v1/user/get_username_realname/$', users.RealNameView.as_view()),  # 获取真实姓名
 ]
 
 router = DefaultRouter()
@@ -30,7 +32,6 @@ router.register("api/v1/users", users.UserViewSet)
 router.register("api/v1/questions", questions.QuestionViewSet)
 router.register("api/v1/back_questions", back_question.BackQuestionViewSet)
 router.register("api/v1/follow_questions", follow_question.FollowQuestionViewSet)
-
 urlpatterns += router.urls
 
 # swagger

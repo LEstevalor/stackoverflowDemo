@@ -12,6 +12,8 @@ class ErrorCodes:
     BACK_QUESTION_CREATE_FAILED = ErrorCode("回帖创建失败")
     BACK_QUESTION_UPDATE_FAILED = ErrorCode("回帖更改失败")
     BACK_QUESTION_DELETE_FAILED = ErrorCode("回帖删除失败")
+    BACK_QUESTION_USER_UPDATE_FAILED = ErrorCode("回帖状态赞同更新失败")
+    BACK_QUESTION_NO_USER_UPDATE_FAILED = ErrorCode("回帖状态不赞同更新失败")
 
     def dump(self, fh=None):
         """A function to dump ErrorCodes as markdown table."""
