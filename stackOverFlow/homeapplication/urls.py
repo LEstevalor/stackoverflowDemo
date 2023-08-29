@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from .views import users, questions
+from .views import users, questions, back_question, follow_question
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -28,6 +28,8 @@ urlpatterns = [
 router = DefaultRouter()
 router.register("api/v1/users", users.UserViewSet)
 router.register("api/v1/questions", questions.QuestionViewSet)
+router.register("api/v1/back_questions", back_question.BackQuestionViewSet)
+router.register("api/v1/follow_questions", follow_question.FollowQuestionViewSet)
 
 urlpatterns += router.urls
 

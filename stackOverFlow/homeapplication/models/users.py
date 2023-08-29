@@ -9,8 +9,8 @@ class User(AbstractUser):
     # password = models.CharField(max_length=100)
     # email = models.EmailField()
     question_count = models.IntegerField(default=0, verbose_name="发帖数")
-    back_question = models.IntegerField(default=0, verbose_name="回帖数")
     follow_question = models.IntegerField(default=0, verbose_name="跟帖数")
+    back_question = models.IntegerField(default=0, verbose_name="回帖数")
 
     class Meta:
         db_table = 'sof_user'

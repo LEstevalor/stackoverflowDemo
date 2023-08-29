@@ -7,6 +7,11 @@ class ErrorCodes:
     # 问题贴
     QUESTION_CREATE_FAILED = ErrorCode("问题贴创建失败")
     QUESTION_UPDATE_FAILED = ErrorCode("问题贴修改失败")
+    QUESTION_DELETE_FAILED = ErrorCode("问题贴删除失败")
+    # 回帖
+    BACK_QUESTION_CREATE_FAILED = ErrorCode("回帖创建失败")
+    BACK_QUESTION_UPDATE_FAILED = ErrorCode("回帖更改失败")
+    BACK_QUESTION_DELETE_FAILED = ErrorCode("回帖删除失败")
 
     def dump(self, fh=None):
         """A function to dump ErrorCodes as markdown table."""

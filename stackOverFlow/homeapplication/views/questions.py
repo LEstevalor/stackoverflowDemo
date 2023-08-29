@@ -1,6 +1,7 @@
 import logging
 
 from django.shortcuts import get_object_or_404
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.db.transaction import atomic
 from rest_framework import status
@@ -12,16 +13,18 @@ from stackOverFlow.homeapplication.models import Question
 from stackOverFlow.homeapplication.serializers.questions import (
     QuestionSerializer,
     QuestionCreateSerializer,
-    QuestionUpdateSerializer
+    QuestionUpdateSerializer,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class QuestionViewSet(GenericViewSet):
-    """用户注册视图"""
+    """问题贴视图"""
     queryset = Question.objects.filter()
     serializer_class = QuestionSerializer
+
+    # id_parameter = openapi.Parameter('id', in_=openapi.IN_QUERY, description='question_id', type=openapi.TYPE_INTEGER)
 
     @atomic
     @swagger_auto_schema(
@@ -57,3 +60,18 @@ class QuestionViewSet(GenericViewSet):
             logger.exception("问题贴修改失败")
             raise error_codes.QUESTION_UPDATE_FAILED
         return Response(QuestionSerializer(question).data, status=status.HTTP_200_OK)
+
+    @atomic
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="问题"
+    )
+    def destroy(self, request, *arg, **kwargs):
+        """删帖"""
+        question = get_object_or_404(Question, pk=self.get_object().id)
+        try:
+            Question.objects.delete_question(request=request, question=question)
+        except Exception:
+            logger.exception("问题贴删除失败")
+            raise error_codes.QUESTION_DELETE_FAILED
+        return Response(QuestionSerializer(question).data, status=status.HTTP_204_NO_CONTENT)
