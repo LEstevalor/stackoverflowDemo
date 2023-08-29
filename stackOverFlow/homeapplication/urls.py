@@ -25,6 +25,7 @@ urlpatterns = [
     re_path(r'^api/v1/user/register/$', users.RegisterUserView.as_view()),  # 注册功能
     re_path(r'^api/v1/user/unique/$', users.UniqueView.as_view()),  # 检查账号或邮箱是否注册过
     re_path(r'^api/v1/user/get_username_realname/$', users.RealNameView.as_view()),  # 获取真实姓名
+    re_path(r'^api/v1/user/check_user/$', users.UserView.as_view()),  # 判断前端用户状态是否正确
 ]
 
 router = DefaultRouter()

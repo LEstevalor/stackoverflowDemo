@@ -14,7 +14,7 @@ export default {
     }
   },
   mounted () {
-    if (this.username !== 'admin' || !this.token) {
+    if (!this.token) {
       this.$router.push('/login')
     }
   }

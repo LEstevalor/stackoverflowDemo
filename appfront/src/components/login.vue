@@ -4,7 +4,7 @@
       <div class='avue-home__main'>
         <img class='avue-home__loading' src='../assets/loading-spin.svg' alt='loading'>
         <div class='avue-home__title'>
-          DBA龙洞小助手努力加载中...
+          GDUT龙洞小助手努力加载中...
         </div>
       </div>
     </div>
@@ -12,9 +12,9 @@
     <div style='display: flex;width: 100%;height: 100%;overflow: hidden;'>
       <div v-show='page==="login"' class='login-modal' id='loginDiv'>
         <form>
-          <h1 style='text-align: center;color: aliceblue;'>WELCOME TO GDUT DBA</h1>
+          <h1 style='text-align: center;color: aliceblue;'>WELCOME TO GDUT</h1>
           <p>账 号: <input id='username' v-model="username" type='text'>
-            <span v-bk-tooltips.top-start="'学号为账号或邮箱'" class='top-start'>
+            <span v-bk-tooltips.top-start="'用户账号或邮箱'" class='top-start'>
                 <i class='bk-icon icon-info-circle-shape'></i>
             </span>
           </p>
@@ -32,11 +32,10 @@
       </div>
       <div v-show='page==="register"' class='login-modal' id='loginDiv2'>
         <form>
-          <h1 style='text-align: center;color: aliceblue;'> WELCOME TO GDUT </h1>
+          <h1 style='text-align: center;color: aliceblue;'> WELCOME TO GDUT</h1>
           <p>  账 号: <input id='username2' v-model="username" type='text'></p>
           <p>  密 码: <input id='password2' v-model="password" type='password'></p>
           <p>重输密码: <input id='password22' v-model="password2" type='password'></p>
-          <p>  手 机: <input id='phone' v-model="phone" type='text'></p>
           <p>  邮 箱: <input id='email' v-model="email" type='text'></p>
           <p><label>验证码:</label>
           <input type="text" v-model="sms_code" @blur="check_sms_code" name="msg_code" id="msg_code" class="msg_input">
@@ -72,7 +71,6 @@ export default {
       passwordType: 'password',
       sms_code_tip: '获取邮箱验证码',
       password2: '', // 重输密码
-      phone: null, // 手机号
       email: '', // 邮箱
       sms_code: '', // 短信验证码
       send_flag: true, // 用于标志允许用户发送验证码
@@ -93,22 +91,20 @@ export default {
   },
   methods: {
     check_error_username () {
-      // console.logs(!this.username)
-      // console.logs(/^\d{10}$/.test(this.username))
-      // console.logs(this.username === 'admin')
-      return !this.username || !(/^\d{10}$/.test(this.username) || this.username === 'admin')
+      // console.log(this.username.length)
+      return !this.username || !(this.username.length < 20)
     },
     handleSubmit () {
       if (this.check_error_username()) {
-        this.warningInfoBox('请输入用户名或输入正确的用户名')
+        this.warningInfoBox('请输入不超过20位的用户名')
       } else if (!this.password) {
         this.warningInfoBox('请输入密码')
       } else {
-        axios.post(host + '/login/', {username: this.username, password: this.password}, {
+        axios.post(host + '/api/v1/user/login/', {username: this.username, password: this.password}, {
           responseType: 'json',
           withCredentials: true // 跨域情况可以携带cookie
         }).then(response => {
-          this.successInfoBox('登录成功')
+          this.successInfoBox('牛，登录成功了')
           // 记住登录
           sessionStorage.clear()
           localStorage.clear()
@@ -119,10 +115,13 @@ export default {
           if (error.response.status === 400) {
             this.errorInfoBox(error.response.data.message) // 展示发送短信错误提示
           } else {
-            console.log(error.response.data)
-            this.errorInfoBox('登录失败')
             this.username = ''
             this.password = ''
+            console.log(this.username)
+            console.log(this.password)
+
+            console.log(error.response.data)
+            this.errorInfoBox('哦吼，登录失败！')
           }
         })
       }
@@ -156,7 +155,7 @@ export default {
       if (this.send_flag && this.check_before_email()) {
         this.send_flag = false // 60s后才允许再次发送
         // console.logs(host + '/email_codes/' + this.email + '/')
-        axios.get(host + '/email_codes/', {responseType: 'json', params: {email: this.email}})
+        axios.get(host + '/api/v1/users/email_send/', {responseType: 'json', params: {email: this.email}})
           .then(response => {
             var num = 60 // 倒计时60秒，60秒后允许用户再次点击发送短信验证码的按钮
             // 设置一个计时器
@@ -190,9 +189,6 @@ export default {
       } else if (this.password !== this.password2) {
         this.warningInfoBox('请确保两次密码输入相同')
         return false
-      } else if (!(/^[1][3,4,5,7,8][0-9]{9}$/.test(this.phone))) {
-        this.warningInfoBox('请确保输入的手机号格式正确')
-        return false
       } else if (!(/^\w+@\w+\.\w+$/i.test(this.email))) {
         this.warningInfoBox('请确保输入的email格式正确')
         return false
@@ -205,11 +201,11 @@ export default {
         this.warningInfoBox('验证码错误')
         return
       }
-      axios.get(host + '/check_email_codes/', {responseType: 'json',
+      axios.get(host + '/api/v1/users/email_verify/', {responseType: 'json',
         params: {sms_code: this.sms_code, email: this.email}})
         .then(response => {
           this.check_send_code_res = true
-          this.successInfoBox('验证码正确')
+          this.successInfoBox('验证码正确√')
         })
         .catch(error => {
           if (error.response.status === 400) {
@@ -221,7 +217,7 @@ export default {
         })
     },
     check_unique_username () { // 账号是否注册过
-      axios.get(host + '/unique/', {responseType: 'json',
+      axios.get(host + '/api/v1/user/unique/', {responseType: 'json',
         params: {username: this.username, str: 'username'}})
         .then(response => {
           if (response.data.count > 0) {
@@ -237,7 +233,7 @@ export default {
         })
     },
     check_unique_email () { // 邮箱是否唯一
-      axios.get(host + '/unique/', {responseType: 'json',
+      axios.get(host + '/api/v1/user/unique/', {responseType: 'json',
         params: {email: this.email, str: 'email'}})
         .then(response => {
           if (response.data.count > 0) {
@@ -263,11 +259,10 @@ export default {
         console.log(this.check_send_code_res)
 
         if (this.check_unique_username_res && this.check_unique_email_res && this.check_send_code_res) {
-          axios.post(host + '/user_register/', {
+          axios.post(host + '/api/v1/user/register/', {
             username: this.username,
             password: this.password,
             password2: this.password2,
-            mobile: this.phone, // 前端用的phone，后端用的mobile
             email: this.email
           }, {responseType: 'json'})
             .then(response => {

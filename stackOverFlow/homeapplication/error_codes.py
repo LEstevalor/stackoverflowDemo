@@ -4,6 +4,8 @@ from blue_krill.web.std_error import ErrorCode
 class ErrorCodes:
     # 用户
     USER_CREATE_FAILED = ErrorCode("用户注册失败")
+    SENR_EMAIL_FAILED = ErrorCode("邮箱发送失败")
+    EMAIL_VERIFY_FAILED = ErrorCode("邮箱验证有误")
     # 问题贴
     QUESTION_CREATE_FAILED = ErrorCode("问题贴创建失败")
     QUESTION_UPDATE_FAILED = ErrorCode("问题贴修改失败")

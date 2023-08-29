@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from stackOverFlow.homeapplication.managers.users import UserManager
+
 
 class User(AbstractUser):
     """自定义用户模型类"""
@@ -11,6 +13,8 @@ class User(AbstractUser):
     question_count = models.IntegerField(default=0, verbose_name="发帖数")
     follow_question = models.IntegerField(default=0, verbose_name="跟帖数")
     back_question = models.IntegerField(default=0, verbose_name="回帖数")
+
+    objects = UserManager()
 
     class Meta:
         db_table = 'sof_user'

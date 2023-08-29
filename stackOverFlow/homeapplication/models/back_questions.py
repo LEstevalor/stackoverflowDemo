@@ -25,7 +25,7 @@ class BackUser(models.Model):
     """回帖中用户赞同或不赞同"""
     user_id = models.IntegerField(verbose_name="用户ID")
     back_question_id = models.IntegerField(verbose_name="回帖ID")
-    statue = models.CharField(
+    status = models.CharField(
         "赞同状态", max_length=10, choices=BackUserStatus.get_choices(), default=BackUserStatus.ZERO.value
     )
 

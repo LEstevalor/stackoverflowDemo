@@ -27,8 +27,14 @@ SECRET_KEY = 'django-insecure-&k_^b_4%e+p72%2!0&3f0t-anoy=k+bd3tw+2)l59vy_#hwmhj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# 允许哪些域名访问Django
+ALLOWED_HOSTS = ['127.0.0.1', 'Localhost']
+# CORS追加白名单（显然针对的是前端域名）（后端可能自己识别不到自己吗？）
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+)
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
 
 # Application definition
 
@@ -49,6 +55,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',    # 最外层的中间件（先解决跨域问题了再走下面的中间件，所以放最前面）
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -89,6 +96,37 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# 配置redis缓存
+CACHES = {
+    # 默认缓存配置
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "verify_codes": {  # 缓存验证码
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://localhost:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+# 发送邮箱配置(注释掉的配置为全局已经有的默认配置)
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_PORT = 25
+EMAIL_HOST = 'smtp.163.com'   # 邮箱服务器
+# 发送邮件的邮箱
+EMAIL_HOST_USER = 'lxd2534891955@163.com'
+# 在邮箱中设置的客户端授权密码
+EMAIL_HOST_PASSWORD = 'MQFAOXAEQJTEALXO'
+# 收件⼈看到的发件⼈
+EMAIL_FROM = 'GDUT龙洞助手<lxd2534891955@163.com>'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

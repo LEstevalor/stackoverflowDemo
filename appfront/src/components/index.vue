@@ -332,7 +332,7 @@ export default {
     console.log(this.token)
     if (this.username && this.token) {
       // 判断登录状态，通过JWT，判断username是否有效，token是否有效
-      axios.get(host + '/check_user/', {
+      axios.get(host + '/api/v1/user/check_user/', {
         // 向后端传递JWT token的方法
         headers: {
           'Authorization': 'Bearer ' + this.token
@@ -356,7 +356,7 @@ export default {
         }
       }
     } else {
-      axios.get(host + '/get_username_realname/', {responseType: 'json',
+      axios.get(host + '/api/v1/user/get_username_realname/', {responseType: 'json',
         params: {username: this.username}}).then(
         response => {
           this.username_realname = response.data.username_realname
@@ -369,7 +369,6 @@ export default {
         }
       })
     }
-    this.get_status() // 获取权限级别
     /* 以下代码是为了自适应例子父级的宽高而设置 */
     this.handleResize()
     window.addEventListener('resize', this.handleResize)
@@ -381,23 +380,6 @@ export default {
     /* 以上代码是为了自适应例子父级的宽高而设置 */
   },
   methods: {
-    get_status () { // 返回权限状态
-      axios.get(host + '/status/', {
-        headers: {
-          'Authorization': 'Bearer ' + this.token
-        },
-        responseType: 'json',
-        params: {username: this.username}
-      })
-        .then(response => {
-          this.status = response.data.status
-          console.log('获取到权限状态:' + this.status)
-          sessionStorage.status = this.status // 后端必须加判断，否则有风险
-        }).catch(error => {
-          console.log('获取不到权限状态')
-          console.log(error.response.data)
-        })
-    },
     checkout (obj) {
       console.log(obj)
       if (obj === '首页') {

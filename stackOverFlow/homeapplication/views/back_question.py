@@ -79,7 +79,7 @@ class BackQuestionViewSet(GenericViewSet):
         tags=["回帖 BackQuestion"],
         operation_summary="回帖"
     )
-    @action(detail=False, methods=["POST"])
+    @action(detail=True, methods=["POST"])
     def vote_back(self, request, pk):
         """
         回帖赞同否
@@ -90,14 +90,14 @@ class BackQuestionViewSet(GenericViewSet):
         except Exception:
             logger.exception("回帖状态赞同更新失败")
             raise error_codes.BACK_QUESTION_USER_UPDATE_FAILED
-        return Response(BackUserSerializer(back_user), status=status.HTTP_200_OK)
+        return Response(BackUserSerializer(back_user).data, status=status.HTTP_200_OK)
 
     @atomic
     @swagger_auto_schema(
         tags=["回帖 BackQuestion"],
         operation_summary="回帖"
     )
-    @action(detail=False, methods=["POST"])
+    @action(detail=True, methods=["POST"])
     def down_vote_back(self, request, pk):
         """
         回帖不赞同否
@@ -108,4 +108,4 @@ class BackQuestionViewSet(GenericViewSet):
         except Exception:
             logger.exception("回帖状态不赞同更新失败")
             raise error_codes.BACK_QUESTION_NO_USER_UPDATE_FAILED
-        return Response(BackUserSerializer(back_user), status=status.HTTP_200_OK)
+        return Response(BackUserSerializer(back_user).data, status=status.HTTP_200_OK)

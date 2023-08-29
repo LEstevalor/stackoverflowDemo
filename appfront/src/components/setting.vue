@@ -219,11 +219,10 @@ export default {
         console.log(this.check_send_code_res)
 
         if (this.check_unique_username_res && this.check_unique_email_res && this.check_send_code_res) {
-          axios.post(host + '/user_register/', {
+          axios.post(host + '/api/v1/user/user_register/', {
             username: this.username,
             password: this.password,
             password2: this.password2,
-            mobile: this.phone, // 前端用的phone，后端用的mobile
             email: this.email
           }, {responseType: 'json'})
             .then(response => {

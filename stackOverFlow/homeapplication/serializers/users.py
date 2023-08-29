@@ -22,8 +22,16 @@ class MyTokenObtainPairSerializer(TokenObtainSerializer):
         data['access'] = str(refresh.access_token)
 
         data['token'] = data['access']
-        data['username'] = self.user.usernamera
+        data['username'] = self.user.username
         return data
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    """⽤户详细信息序列化器"""
+    class Meta:
+        model = User
+        # 对应前端需要返回的字段即可
+        fields = ['username']
 
 
 class UserSerializer(serializers.ModelSerializer):
