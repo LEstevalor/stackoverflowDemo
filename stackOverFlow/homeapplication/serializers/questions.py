@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from stackOverFlow.homeapplication.models import Question, TagsQuestion
+from stackOverFlow.homeapplication.models import Question, TagsQuestion, QuestionUser
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -28,6 +28,16 @@ class QuestionDestroySerializer(serializers.Serializer):
 
 class QuestionsByTagSerializer(serializers.Serializer):
     results = QuestionSerializer(many=True, help_text="问题列表")
+
+
+class QuestionUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionUser
+        fields = "__all__"
+
+
+class QuestionUserStatusSerializer(serializers.Serializer):
+    status = serializers.CharField(help_text="赞同状态")
 
 
 # 标签型序列化器

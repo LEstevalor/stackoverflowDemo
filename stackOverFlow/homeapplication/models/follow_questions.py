@@ -7,7 +7,7 @@ from stackOverFlow.homeapplication.managers.follow_question import FollowQuestio
 class FollowQuestion(BaseModel):
     """跟帖模型"""
     content = models.TextField(verbose_name="内容")
-    user_id = models.IntegerField(verbose_name="用户ID")
+    username = models.CharField(verbose_name="作者", max_length=20)
     back_question_id = models.IntegerField(verbose_name="回帖ID", null=True)
 
     objects = FollowQuestionManager()

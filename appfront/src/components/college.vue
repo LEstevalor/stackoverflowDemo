@@ -45,7 +45,8 @@
       <bk-table-column type="selection" width="60"></bk-table-column>  <!--可选的地方-->
       <bk-table-column type="index" label="序列" width="60"></bk-table-column>
       <bk-table-column label="标签" prop="tag"></bk-table-column>
-      <bk-table-column label="贴数" prop="count"></bk-table-column>
+      <!--  sortable属性赋予bk-table-column排序的能力   -->
+      <bk-table-column label="贴数" prop="count" sortable></bk-table-column>
       <bk-table-column label="操作" width="150">
         <template slot-scope="props">
           <bk-popover class="dot-menu" placement="bottom-start" theme="dot-menu light"

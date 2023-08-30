@@ -10,6 +10,7 @@ class User(AbstractUser):
     # username = models.CharField(max_length=100)
     # password = models.CharField(max_length=100)
     # email = models.EmailField()
+    username = models.CharField(verbose_name="作者", max_length=20, db_index=True, unique=True)
     question_count = models.IntegerField(default=0, verbose_name="发帖数")
     follow_question = models.IntegerField(default=0, verbose_name="跟帖数")
     back_question = models.IntegerField(default=0, verbose_name="回帖数")
@@ -25,7 +26,7 @@ class User(AbstractUser):
 
 
 class UserImage(models.Model):
-    user_id = models.IntegerField(verbose_name="用户ID", unique=True, db_index=True)
+    username = models.CharField(verbose_name="作者", max_length=20, db_index=True, unique=True)
     image = models.BinaryField(verbose_name="用户头像")
 
     class Meta:

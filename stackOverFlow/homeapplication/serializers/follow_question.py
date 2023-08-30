@@ -12,4 +12,4 @@ class FollowQuestionSerializer(serializers.ModelSerializer):
 class FollowQuestionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = FollowQuestion
-        exclude = ["user_id"]
+        exclude = ["username"]

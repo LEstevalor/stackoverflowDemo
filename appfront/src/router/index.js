@@ -57,9 +57,9 @@ export default new Router({
           component: () => import('../components/ArticleScrollPage.vue')
         },
         {
-          path: '/user',
-          name: 'index.user',
-          component: () => import('../components/login/user.vue')
+          path: '/top_question',
+          name: 'index.top_question',
+          component: () => import('../components/top_question.vue')
         },
       ]
     },

@@ -13,7 +13,7 @@ class FollowQuestionManager(models.Manager):
         user = User.objects.get(username=request.user.username)
         user.follow_question += 1
         user.save()
-        validated_data["user_id"] = user.id
+        validated_data["username"] = user.username
         return super().create(**validated_data)
 
     def delete_follow_question(self, request, back_question):

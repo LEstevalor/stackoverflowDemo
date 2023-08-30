@@ -10,10 +10,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from stackOverFlow.homeapplication.error_codes import error_codes
-from stackOverFlow.homeapplication.models import Question, TagsQuestion
+from stackOverFlow.homeapplication.models import Question, TagsQuestion, User, QuestionUser
 from stackOverFlow.homeapplication.serializers.questions import (
     QuestionSerializer, QuestionCreateSerializer, QuestionUpdateSerializer, TagsListSerializer,
-    QuestionsByTagSerializer, TagsHotListSerializer, TagsSerializer,
+    QuestionsByTagSerializer, TagsHotListSerializer, TagsSerializer, QuestionUserSerializer,
+    QuestionUserStatusSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -154,3 +155,57 @@ class QuestionViewSet(GenericViewSet):
             logger.exception("标签获取问题失败")
             raise error_codes.TAG_QUESTION_LIST_FAILED
         return Response(QuestionsByTagSerializer({"results": questions}).data, status=status.HTTP_200_OK)
+
+    @atomic
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="赞问题贴"
+    )
+    @action(detail=True, methods=["POST"])
+    def vote(self, request, pk):
+        """
+        赞问题贴
+        """
+        back_question = get_object_or_404(Question, pk=pk)
+        try:
+            question_user = Question.objects.vote_back(request=request, back_question=back_question)
+        except Exception:
+            logger.exception("赞问题贴更新失败")
+            raise error_codes.QUESTION_USER_UPDATE_FAILED
+        return Response(QuestionUserSerializer(question_user).data, status=status.HTTP_200_OK)
+
+    @atomic
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="否赞问题贴"
+    )
+    @action(detail=True, methods=["POST"])
+    def down_vote(self, request, pk):
+        """
+        否赞问题贴
+        """
+        back_question = get_object_or_404(Question, pk=pk)
+        try:
+            question_user = Question.objects.down_vote_back(request=request, back_question=back_question)
+        except Exception:
+            logger.exception("否赞问题贴更新失败")
+            raise error_codes.QUESTION_NO_USER_UPDATE_FAILED
+        return Response(QuestionUserSerializer(question_user).data, status=status.HTTP_200_OK)
+
+    @atomic
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="获取问题用户赞同状态"
+    )
+    @action(detail=False, methods=["GET"])
+    def get_vote_status(self, request, *args, **kwargs):
+        try:
+            question_user = QuestionUser.objects.filter(username=request.user.username, question_id=request.data["question_id"])
+            if question_user.exists():
+                status = question_user.status
+            else:
+                status = "zero"
+        except Exception:
+            logger.exception("状态获取失败")
+            raise error_codes.QUESTION_USER_GET_STATUS_FAILED
+        return Response(QuestionUserStatusSerializer(status).data, status=status.HTTP_200_OK)

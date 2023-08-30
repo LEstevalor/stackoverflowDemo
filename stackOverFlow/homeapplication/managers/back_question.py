@@ -1,6 +1,7 @@
 import logging
 
 from django.db import models
+from django.db.models import ExpressionWrapper, F, IntegerField
 
 from stackOverFlow.homeapplication.constants.model_constants import BackUserStatus
 
@@ -15,7 +16,7 @@ class BackQuestionManager(models.Manager):
         user = User.objects.get(username=request.user.username)
         user.back_question += 1
         user.save()
-        validated_data["user_id"] = user.id
+        validated_data["username"] = user.username
         return super().create(**validated_data)
 
     def update_back_question(self, request, validated_data):
@@ -42,15 +43,14 @@ class BackQuestionManager(models.Manager):
     def vote_back(self, request, back_question):
         """赞贴"""
         from stackOverFlow.homeapplication.models import User, BackUser
-        user = User.objects.get(username=request.user.username)
-        back_user = BackUser.objects.filter(user_id=user.id, back_question_id=back_question.id)
+        back_user = BackUser.objects.filter(username=request.user.username, back_question_id=back_question.id)
         # 已经是点赞状态则返回ZERO状态
         if back_user.values_list("status", flat=True) == BackUserStatus.UPVOTE.value:
             back_user.status = BackUserStatus.ZERO.value
             back_user.save()
             back_question.upvotes -= 1
         else:
-            back_user = BackUser.objects.update_or_create(user_id=user.id, back_question_id=back_question.id,
+            back_user = BackUser.objects.update_or_create(username=request.user.username, back_question_id=back_question.id,
                                                           status=BackUserStatus.UPVOTE.value)
             back_question.upvotes += 1
         back_question.save()
@@ -58,16 +58,15 @@ class BackQuestionManager(models.Manager):
 
     def down_vote_back(self, request, back_question):
         """否贴"""
-        from stackOverFlow.homeapplication.models import User, BackUser
-        user = User.objects.get(username=request.user.username)
-        back_user = BackUser.objects.filter(user_id=user.id, back_question_id=back_question.id)
+        from stackOverFlow.homeapplication.models import BackUser
+        back_user = BackUser.objects.filter(username=request.user.username, back_question_id=back_question.id)
         # 已经是点赞状态则返回ZERO状态
         if back_user.values_list("status", flat=True) == BackUserStatus.DOWNVOTE.value:
             back_user.status = BackUserStatus.ZERO.value
             back_user.save()
             back_question.downvotes -= 1
         else:
-            back_user = BackUser.objects.update_or_create(user_id=user.id, back_question_id=back_question.id,
+            back_user = BackUser.objects.update_or_create(username=request.user.username, back_question_id=back_question.id,
                                                           status=BackUserStatus.DOWNVOTE.value)
             back_question.downvotes += 1
         back_question.save()

@@ -5,6 +5,8 @@ from django.db.models import Count
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from stackOverFlow.homeapplication.constants.model_constants import BackUserStatus
+
 logger = logging.getLogger(__name__)
 
 
@@ -22,7 +24,7 @@ class QuestionManager(models.Manager):
             if not tags_question.exists():
                 TagsQuestion.objects.create(tag=validated_data["tag"])
 
-        validated_data["user_id"] = user.id
+        validated_data["username"] = user.username
         return super().create(**validated_data)
 
     def update_question(self, request, validated_data, pk):
@@ -61,6 +63,38 @@ class QuestionManager(models.Manager):
         top_indices = sorted_indices[-limit:]
         related_questions = [all_questions[i] for i in top_indices]
         return related_questions
+
+    def vote_back(self, request, question):
+        """赞问题贴"""
+        from stackOverFlow.homeapplication.models import QuestionUser
+        back_user = QuestionUser.objects.filter(username=request.user.username, back_question_id=question.id)
+        # 已经是点赞状态则返回ZERO状态
+        if back_user.values_list("status", flat=True) == BackUserStatus.UPVOTE.value:
+            back_user.status = BackUserStatus.ZERO.value
+            back_user.save()
+            question.upvotes -= 1
+        else:
+            back_user = QuestionUser.objects.update_or_create(username=request.user.username, back_question_id=question.id,
+                                                              status=BackUserStatus.UPVOTE.value)
+            question.upvotes += 1
+        question.save()
+        return back_user
+
+    def down_vote_back(self, request, question):
+        """否赞问题贴"""
+        from stackOverFlow.homeapplication.models import QuestionUser
+        back_user = QuestionUser.objects.filter(username=request.user.username, back_question_id=question.id)
+        # 已经是点赞状态则返回ZERO状态
+        if back_user.values_list("status", flat=True) == BackUserStatus.DOWNVOTE.value:
+            back_user.status = BackUserStatus.ZERO.value
+            back_user.save()
+            question.downvotes -= 1
+        else:
+            back_user = QuestionUser.objects.update_or_create(username=request.user.username, back_question_id=question.id,
+                                                              status=BackUserStatus.DOWNVOTE.value)
+            question.downvotes += 1
+        question.save()
+        return back_user
 
 
 class TagsQuestionManager(models.Manager):

@@ -230,10 +230,9 @@ export default {
           //   ]
           // },
           {
-            name: '账户信息',
+            name: 'Top问题',
             icon: 'icon-apps-shape',
-            url: '/dashboard/',
-            disabled: true
+            url: '/dashboard/'
           },
           {
             name: '设置',
@@ -378,6 +377,8 @@ export default {
         this.$router.push('/first')
       } else if (obj === '主页面') {
         this.$router.push('/BaseHeader')
+      } else if (obj === 'Top问题') {
+        this.$router.push('/top_question')
       }
     },
     login_out () {

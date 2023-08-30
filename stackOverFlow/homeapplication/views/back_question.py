@@ -10,9 +10,10 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from stackOverFlow.homeapplication.error_codes import error_codes
-from stackOverFlow.homeapplication.models import BackQuestion, Question
+from stackOverFlow.homeapplication.models import BackQuestion, Question, User, BackUser
 from stackOverFlow.homeapplication.serializers.back_question import (
-    BackQuestionSerializer, BackQuestionCreateSerializer, BackQuestionUpdateSerializer, BackUserSerializer
+    BackQuestionSerializer, BackQuestionCreateSerializer, BackQuestionUpdateSerializer, BackUserSerializer,
+    BackListSerializer, BackUserStatusSerializer
 )
 
 logger = logging.getLogger(__name__)
@@ -124,3 +125,21 @@ class BackQuestionViewSet(GenericViewSet):
             logger.exception("回帖状态不赞同更新失败")
             raise error_codes.BACK_QUESTION_NO_USER_UPDATE_FAILED
         return Response(BackUserSerializer(back_user).data, status=status.HTTP_200_OK)
+
+    @atomic
+    @swagger_auto_schema(
+        tags=["回帖 BackQuestion"],
+        operation_summary="获取回帖用户赞同状态"
+    )
+    @action(detail=False, methods=["GET"])
+    def get_vote_back_status(self, request, *args, **kwargs):
+        try:
+            question_user = BackUser.objects.filter(username=request.user.username, question_id=request.data["back_question_id"])
+            if question_user.exists():
+                status = question_user.status
+            else:
+                status = "zero"
+        except Exception:
+            logger.exception("回帖状态获取失败")
+            raise error_codes.BACK_QUESTION_USER_GET_STATUS_FAILED
+        return Response(BackUserStatusSerializer(status).data, status=status.HTTP_200_OK)

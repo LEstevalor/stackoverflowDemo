@@ -15,7 +15,7 @@ class BackQuestionSerializer(serializers.ModelSerializer):
 class BackQuestionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BackQuestion
-        exclude = ["user_id", "upvotes", "downvotes"]
+        exclude = ["username", "upvotes", "downvotes"]
 
 
 class BackQuestionUpdateSerializer(serializers.Serializer):
@@ -30,3 +30,7 @@ class BackUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BackUser
         fields = "__all__"
+
+
+class BackUserStatusSerializer(serializers.Serializer):
+    status = serializers.CharField(help_text="赞同状态")

@@ -15,6 +15,9 @@ class ErrorCodes:
     QUESTION_RELATED_LIST_FAILED = ErrorCode("列出相关问题失败")
     TAG_LIST_FAILED = ErrorCode("列出标签失败")
     TAG_ADD_FAILED = ErrorCode("添加标签失败")
+    QUESTION_USER_UPDATE_FAILED = ErrorCode("赞问题贴更新失败")
+    QUESTION_NO_USER_UPDATE_FAILED = ErrorCode("否赞问题贴更新失败")
+    QUESTION_USER_GET_STATUS_FAILED = ErrorCode("状态获取失败")
     # 回帖
     BACK_QUESTION_CREATE_FAILED = ErrorCode("回帖创建失败")
     BACK_QUESTION_UPDATE_FAILED = ErrorCode("回帖更改失败")
@@ -23,6 +26,7 @@ class ErrorCodes:
     BACK_QUESTION_NO_USER_UPDATE_FAILED = ErrorCode("回帖状态不赞同更新失败")
     BACK_QUESTION_LIST_FAILED = ErrorCode("列出回帖失败")
     BACK_QUESTION_LIST_NEED_QUESTION_ID = ErrorCode("列出回帖需要问题信息")
+    BACK_QUESTION_USER_GET_STATUS_FAILED = ErrorCode("回帖状态获取失败")
 
 
     def dump(self, fh=None):
