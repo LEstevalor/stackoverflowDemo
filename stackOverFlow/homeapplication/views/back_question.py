@@ -27,7 +27,7 @@ class BackQuestionViewSet(GenericViewSet):
     @swagger_auto_schema(
         request_body=BackQuestionCreateSerializer,
         tags=["回帖 BackQuestion"],
-        operation_summary="回帖"
+        operation_summary="回帖创建"
     )
     def create(self, request):
         """
@@ -45,7 +45,7 @@ class BackQuestionViewSet(GenericViewSet):
     @swagger_auto_schema(
         request_body=BackQuestionUpdateSerializer,
         tags=["回帖 BackQuestion"],
-        operation_summary="回帖"
+        operation_summary="跟帖更改"
     )
     def update(self, request, pk):
         """
@@ -62,7 +62,7 @@ class BackQuestionViewSet(GenericViewSet):
     @atomic
     @swagger_auto_schema(
         tags=["回帖 BackQuestion"],
-        operation_summary="回帖"
+        operation_summary="删回帖"
     )
     def destroy(self, request, *arg, **kwargs):
         """删回帖"""
@@ -73,6 +73,21 @@ class BackQuestionViewSet(GenericViewSet):
             logger.exception("回帖删除失败")
             raise error_codes.BACK_QUESTION_DELETE_FAILED
         return Response(self.get_serializer(back_question).data, status=status.HTTP_204_NO_CONTENT)
+
+    @swagger_auto_schema(
+        tags=["回帖 BackQuestion"],
+        operation_summary="回帖列表"
+    )
+    def list(self, request, *args, **kwargs):
+        pk = request.query_params.get('question_id', None)
+        if not pk:
+            raise error_codes.BACK_QUESTION_LIST_NEED_QUESTION_ID
+        try:
+            back_questions = BackQuestion.objects.back_list(pk=pk)
+        except Exception:
+            logger.exception("列出回帖失败")
+            raise error_codes.BACK_QUESTION_LIST_FAILED
+        return Response(BackListSerializer(back_questions).data, status=status.HTTP_200_OK)
 
     @atomic
     @swagger_auto_schema(

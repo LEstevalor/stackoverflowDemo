@@ -31,6 +31,14 @@ class BackQuestionManager(models.Manager):
         FollowQuestion.objects.filter(back_question_id=back_question.id).delete()
         return back_question.delete()
 
+    def back_list(self, request, pk):
+        """搜寻回帖"""
+        # F 表达式计算同表中 upvotes 和 downvotes 之间的差值
+        diff = ExpressionWrapper(F('upvotes') - F('downvotes'), output_field=IntegerField())
+        # 根据差值对查询结果进行排序
+        lists = self.filter(question_id=pk).annotate(difference=diff).order_by('-difference')
+        return lists
+
     def vote_back(self, request, back_question):
         """赞贴"""
         from stackOverFlow.homeapplication.models import User, BackUser

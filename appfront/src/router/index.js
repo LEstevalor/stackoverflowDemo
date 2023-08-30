@@ -17,6 +17,21 @@ export default new Router({
       component: () => import('../components/index.vue'),
       children: [
         {
+          path: '/tag',
+          name: 'index.tag',
+          component: () => import('../components/tag.vue')
+        },
+        {
+          path: '/first',
+          name: 'index.first',
+          component: () => import('../components/first.vue')
+        },
+        {
+          path: '/BaseHeader',
+          name: 'index.BaseHeader',
+          component: () => import('../components/BaseHeader.vue')
+        },
+        {
           path: '/top', // 要跟在父路径的路径后，/father/child
           name: 'index.top', // 名称也是
           component: () => import('../components/top.vue')
@@ -32,46 +47,26 @@ export default new Router({
           component: () => import('../components/major.vue')
         },
         {
-          path: '/teacher',
-          name: 'index.teacher',
-          component: () => import('../components/teacher.vue')
-        },
-        {
           path: '/student',
           name: 'index.student',
           component: () => import('../components/student.vue')
         },
         {
-          path: '/grade',
-          name: 'index.grade',
-          component: () => import('../components/grade.vue')
-        },
-        {
-          path: '/course',
-          name: 'index.course',
-          component: () => import('../components/course.vue')
-        },
-        {
-          path: '/teach_student_class',
-          name: 'index.teach_student_class',
-          component: () => import('../components/teach_student_class.vue')
+          path: '/ArticleScrollPage',
+          name: 'index.ArticleScrollPage',
+          component: () => import('../components/ArticleScrollPage.vue')
         },
         {
           path: '/user',
           name: 'index.user',
-          component: () => import('../components/user.vue')
+          component: () => import('../components/login/user.vue')
         },
-        {
-          path: '/logs',
-          name: 'index.logs',
-          component: () => import('../components/log.vue')
-        }
       ]
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('../components/login.vue')
+      component: () => import('../components/login/login.vue')
       // component: login
     }
   ]

@@ -5,15 +5,15 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.db.transaction import atomic
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from stackOverFlow.homeapplication.error_codes import error_codes
-from stackOverFlow.homeapplication.models import Question
+from stackOverFlow.homeapplication.models import Question, TagsQuestion
 from stackOverFlow.homeapplication.serializers.questions import (
-    QuestionSerializer,
-    QuestionCreateSerializer,
-    QuestionUpdateSerializer,
+    QuestionSerializer, QuestionCreateSerializer, QuestionUpdateSerializer, TagsListSerializer,
+    QuestionsByTagSerializer, TagsHotListSerializer, TagsSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class QuestionViewSet(GenericViewSet):
     @swagger_auto_schema(
         request_body=QuestionCreateSerializer,
         tags=["问题 Question"],
-        operation_summary="问题"
+        operation_summary="帖子创建"
     )
     def create(self, request):
         """
@@ -47,7 +47,7 @@ class QuestionViewSet(GenericViewSet):
     @swagger_auto_schema(
         request_body=QuestionUpdateSerializer,
         tags=["问题 Question"],
-        operation_summary="问题"
+        operation_summary="帖子更改"
     )
     def update(self, request, pk):
         """
@@ -64,7 +64,7 @@ class QuestionViewSet(GenericViewSet):
     @atomic
     @swagger_auto_schema(
         tags=["问题 Question"],
-        operation_summary="问题"
+        operation_summary="删帖"
     )
     def destroy(self, request, *arg, **kwargs):
         """删帖"""
@@ -75,3 +75,82 @@ class QuestionViewSet(GenericViewSet):
             logger.exception("问题贴删除失败")
             raise error_codes.QUESTION_DELETE_FAILED
         return Response(QuestionSerializer(question).data, status=status.HTTP_204_NO_CONTENT)
+
+    @atomic
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="添加标签"
+    )
+    @action(detail=False, methods=["POST"])
+    def add_tag(self, request, *args, **kwargs):
+        try:
+            tag = TagsQuestion.objects.update_or_create(tag=request.data["tag"])[0]
+        except Exception:
+            logger.exception("添加标签失败")
+            raise error_codes.TAG_ADD_FAILED
+        return Response(TagsSerializer(tag).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="问题搜查"
+    )
+    def list(self, request, *args, **kwargs):
+        try:
+            questions = Question.objects.all()
+        except Exception:
+            logger.exception("问题搜查失败")
+            raise error_codes.QUESTION_LIST_FAILED
+        return Response(QuestionsByTagSerializer({"results": questions}).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="获取相关问题列表"
+    )
+    @action(detail=True, methods=["POST"])
+    def get_related_questions(self, request, pk):
+        question = get_object_or_404(Question, pk=pk)
+        try:
+            related_questions = Question.objects.get_related_questions(question)
+        except Exception:
+            logger.exception("列出相关问题失败")
+            raise error_codes.QUESTION_RELATED_LIST_FAILED
+        return Response(QuestionsByTagSerializer({"results": related_questions}).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="列出标签"
+    )
+    @action(detail=False, methods=["GET"])
+    def list_tag(self, request, *args, **kwargs):
+        try:
+            tags_question = TagsQuestion.objects.find_all(data=request.GET.get("tag"))
+        except Exception:
+            logger.exception("列出标签失败")
+            raise error_codes.TAG_LIST_FAILED
+        return Response(TagsListSerializer({"results": tags_question}).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="获取问题最多的五个标签"
+    )
+    @action(detail=False, methods=["GET"])
+    def list_hot_tag(self, request, *args, **kwargs):
+        try:
+            tags_question = TagsQuestion.objects.list_hot_tag(request)
+        except Exception:
+            logger.exception("列出标签失败")
+            raise error_codes.TAG_LIST_FAILED
+        return Response(TagsHotListSerializer({"results": tags_question}).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["问题 Question"],
+        operation_summary="标签获取问题"
+    )
+    @action(detail=True, methods=["POST"])
+    def get_question_by_tag(self, request, pk):
+        try:
+            questions = Question.objects.filter(tag=self.get_object().tag)
+        except Exception:
+            logger.exception("标签获取问题失败")
+            raise error_codes.TAG_QUESTION_LIST_FAILED
+        return Response(QuestionsByTagSerializer({"results": questions}).data, status=status.HTTP_200_OK)

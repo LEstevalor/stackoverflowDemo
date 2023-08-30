@@ -155,7 +155,7 @@ export default {
             // ]
           },
           {
-            name: '学院',
+            name: '标签列表',
             icon: 'icon-tree-group-shape',
             url: '/bp/'
           },
@@ -165,7 +165,7 @@ export default {
             url: '/component/'
           },
           {
-            name: '教师',
+            name: '标签',
             icon: 'icon-tree-process-shape',
             url: '/uptime_check/summary/'
           },
@@ -183,17 +183,17 @@ export default {
             // ]
           },
           {
-            name: '班级',
+            name: '文章',
             icon: 'icon-clock-shape',
             url: '/datasource/'
           },
           {
-            name: '课程信息',
+            name: '全页',
             icon: 'icon-clock-shape',
             url: '/datasource/'
           },
           {
-            name: '教研室',
+            name: '主页面',
             icon: 'icon-empty-shape',
             url: '/biz_manage/',
             group: true
@@ -255,32 +255,12 @@ export default {
       header: {
         selectList: [
           {
-            name: '学院信息',
+            name: '标签',
             id: 1
           },
           {
-            name: '专业信息',
+            name: '相关性分析',
             id: 2
-          },
-          {
-            name: '教师信息',
-            id: 3
-          },
-          {
-            name: '学生课程',
-            id: 4
-          },
-          {
-            name: '班级信息',
-            id: 5
-          },
-          {
-            name: '课程信息',
-            id: 6
-          },
-          {
-            name: '教研室信息',
-            id: 7
           }
         ],
         active: 2,
@@ -359,7 +339,7 @@ export default {
       axios.get(host + '/api/v1/user/get_username_realname/', {responseType: 'json',
         params: {username: this.username}}).then(
         response => {
-          this.username_realname = response.data.username_realname
+          this.username_realname = response.data.message
           console.log('Your name:' + this.username_realname)
         }).catch(error => {
         if (error.response.status === 400) {
@@ -384,26 +364,20 @@ export default {
       console.log(obj)
       if (obj === '首页') {
         this.$router.push('/top')
-      } else if (obj === '学院' || obj === '学院信息') {
+      } else if (obj === '标签列表') {
         this.$router.push('/college')
       } else if (obj === '专业' || obj === '专业信息') {
         this.$router.push('/major')
-      } else if (obj === '教师' || obj === '教师信息') {
-        this.$router.push('/teacher')
       } else if (obj === '学生信息') {
         this.$router.push('/student')
-      } else if (obj === '班级' || obj === '班级信息') {
-        this.$router.push('/grade')
-      } else if (obj === '课程信息') {
-        this.$router.push('/course')
-      } else if (obj === '教研室' || obj === '教研室信息') {
-        this.$router.push('/teach_student_class')
-      } else if (obj === '账户信息') {
-        this.$router.push('/user')
-      } else if (obj === '设置') {
-        this.$router.push('/setting')
-      } else if (obj === '操作日志') {
-        this.$router.push('/logs')
+      } else if (obj === '文章') {
+        this.$router.push('/ArticleScrollPage')
+      } else if (obj === '标签') {
+        this.$router.push('/tag')
+      } else if (obj === '全页') {
+        this.$router.push('/first')
+      } else if (obj === '主页面') {
+        this.$router.push('/BaseHeader')
       }
     },
     login_out () {

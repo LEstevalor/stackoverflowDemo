@@ -3,29 +3,23 @@
      <bk-compose-form-item class="select-demo">
        <div>&nbsp;</div>
         <bk-select v-model="value1" style="width: 140px" size="large" :clearable="false">
-          <bk-option id="ip" name="学院名称" @click="option_college"></bk-option>
-          <bk-option id="source" name="院长名称" @click="option_dean"></bk-option>
-          <bk-option id="content" name="简介信息" @click="option_infor"></bk-option>
+          <bk-option id="tag" name="标签" @click="option_tag"></bk-option>
         </bk-select>
-        <bk-input style="width: 400px" size="large" v-model=textcontent v-if="value1 === 'ip'" key:1 placeholder="请输入学院名称" :left-icon="'bk-icon icon-search'"></bk-input>
-        <bk-input style="width: 400px" size="large" v-model=textcontent v-if="value1 === 'source'" key:2 placeholder="请输入院长名称" :left-icon="'bk-icon icon-search'"></bk-input>
-        <bk-input style="width: 400px" size="large" v-model=textcontent v-if="value1 === 'content'" key:3 placeholder="请输入简介信息" :left-icon="'bk-icon icon-search'"></bk-input>
-       <bk-button type="search" theme="warning" @click="search_data" size="large">search</bk-button>
+        <bk-input style="width: 400px" size="large" v-model=textcontent v-if="value1 === 'tag'" key:1 placeholder="请搜索标签" :left-icon="'bk-icon icon-search'"></bk-input>
+      <bk-button type="search" theme="warning" @click="search_data" size="large">search</bk-button>
      </bk-compose-form-item>
      <div style="float:right;" class="container">
       <div>&nbsp;</div>
       <bk-button theme="primary" @click="toggleTableSize">样式设置</bk-button>
       <span class="ml10">当前尺寸：{{ size }} &nbsp;&nbsp;&nbsp;</span>
       <div>&nbsp;</div>
+      <!-- 添加标签 -->
       <div class="inner">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <bk-popconfirm trigger="click" :ext-cls="'asadsadsads'" width="288" @confirm="addData()">
           <div slot="content">
               <bk-compose-form-item>
-                <h3>学院名称: <bk-input v-model="create_college_name" type='text'/></h3>
-                <h3>院长工号: <bk-input v-model='create_dean_id' type='text'/></h3>
-                <h3>院长名称: <bk-input v-model='create_dean_name' type='text'/></h3>
-                <h3>简介: <bk-input v-model='create_content' type='text'/></h3>
+                <h3>标签: <bk-input v-model="create_tag" type='text'/></h3>
               </bk-compose-form-item>
           </div>
           <bk-button theme="primary" :disabled="status === 'USER'">添加</bk-button>
@@ -41,7 +35,7 @@
       &nbsp;<bk-icon type="upload" />&nbsp;<bk-button theme="success" @click="load_excel()"> 数据导出</bk-button>
     </div>
     <bk-table style="margin-top: 15px;"
-        :data="data"
+        :data="page_data"
         :size="size"
         :pagination="pagination"
         @page-change="handlePageChange"
@@ -50,32 +44,10 @@
         @select-all="curAllSelected">
       <bk-table-column type="selection" width="60"></bk-table-column>  <!--可选的地方-->
       <bk-table-column type="index" label="序列" width="60"></bk-table-column>
-      <bk-table-column label="学院名称" prop="ip"></bk-table-column>
-      <bk-table-column label="院长名称" prop="source"></bk-table-column>
-      <bk-table-column label="学院简介" prop="content"></bk-table-column>
+      <bk-table-column label="标签" prop="tag"></bk-table-column>
+      <bk-table-column label="贴数" prop="count"></bk-table-column>
       <bk-table-column label="操作" width="150">
         <template slot-scope="props">
-          <bk-popconfirm trigger="click" :ext-cls="'asadsadsads'" width="288"
-                         @confirm="changeData(props.row.id, props.row.ip)">
-              <div slot="content">
-                  <bk-compose-form-item>
-                    <h3>学院名称: <bk-input v-model="props.row.ip" type='text' disabled="true"/></h3>
-                    <h3>院长工号: <bk-input v-model='update_dean_id' type='text'/></h3>
-                    <h3>院长名称: <bk-input v-model='update_dean_name' type='text'/></h3>
-                    <h3>简介: <bk-input v-model='update_content' type='text'/></h3>
-                  </bk-compose-form-item>
-              </div>
-              <bk-button class="mr10" theme="primary" text :disabled="status === 'USER'">修改</bk-button>
-          </bk-popconfirm>
-          <bk-popconfirm trigger="click" :ext-cls="'asadsadsads'" width="288" @confirm="removeData(props.row.id)">
-              <div slot="content">
-                  <div class="demo-custom">
-                      <i class="bk-icon icon-info-circle-shape pr5 content-icon"></i>
-                      <div class="content-text">确认删除？一旦删除不可回滚</div>
-                  </div>
-              </div>
-              <bk-button class="mr10" theme="primary" text :disabled="status === 'USER'">删除</bk-button>
-          </bk-popconfirm>
           <bk-popover class="dot-menu" placement="bottom-start" theme="dot-menu light"
                       :trigger="props.$index % 2 === 0 ? 'click' : 'mouseenter'" :arrow="false" offset="15"
                       :distance="0">
@@ -109,20 +81,17 @@ export default {
     bkPopconfirm
   },
   data () {
+    this.token = localStorage.token || sessionStorage.token
     return {
       textcontent: '', // 搜索框输入内容
       size: 'small',
       data: [
         {
-          ip: '数学与统计学院',
-          source: 'XXX',
-          content: '最强大脑',
+          tag: '数学与统计学院',
           id: 1
         },
         {
-          ip: '管理学院',
-          source: 'HHH',
-          content: '肩比光华',
+          tag: '管理学院',
           id: 2
         }
       ],
@@ -132,17 +101,11 @@ export default {
         limit: 10 // 限制
       },
       page_data: [],
-      value1: 'ip',
+      value1: 'tag',
       token: localStorage.token || sessionStorage.token,
       username: localStorage.username || sessionStorage.username,
       status: sessionStorage.status,
-      update_dean_name: '',
-      update_content: '',
-      update_dean_id: '',
-      create_college_name: '',
-      create_dean_id: '',
-      create_dean_name: '',
-      create_content: '',
+      create_tag: '',
       cur_getData: true,
       select_list: [], // 判断是否被选中的列表，被点后全部实时更新
       select_list_all: false // 判断是否被全选
@@ -153,14 +116,15 @@ export default {
   },
   methods: {
     getData () {
-      axios.get(host + '/college/', { // 获取data列表中的数据
+      axios.get(host + '/api/v1/questions/list_hot_tag/', { // 获取data列表中的数据
         headers: {
           'Authorization': 'Bearer ' + this.token
         },
-        responseType: 'json'
+        responseType: 'json',
+        params: {num: 101}
       }).then(response => {
-        console.log('学院信息' + response.data)
-        this.data = response.data.college // 列表的数据和data是绑一起的
+        console.log('信息' + response.data.results)
+        this.data = response.data.results // 列表的数据和data是绑一起的
         this.pagination['count'] = this.data.length
         this.cur_getData = true
         this.getPageData()
@@ -172,19 +136,19 @@ export default {
     getPageData () { // 分页操作显示列表
       this.page_data = []
       let start = (this.pagination.current - 1) * this.pagination.limit
+      console.log(start)
+      console.log(this.pagination.current * this.pagination.limit)
+      console.log(this.pagination.count)
       for (let i = start; i < this.pagination.current * this.pagination.limit  && i < this.pagination.count; i++) {
           this.page_data.push(this.data[i]);
       }
     },
     addData () {
       // 添加数据
-      if (this.create_college_name && this.create_dean_id && this.create_dean_name && this.create_content) {
-        axios.post(host + '/college/', JSON.parse(JSON.stringify(
+      if (this.create_tag) {
+        axios.post(host + '/api/v1/questions/add_tag/', JSON.parse(JSON.stringify(
           {
-            'name': this.create_college_name,
-            'dean_id': this.create_dean_id,
-            'dean_name': this.create_dean_name,
-            'content': this.create_content
+            'tag': this.create_tag
           })), {
           headers: {
             'Authorization': 'Bearer ' + this.token
@@ -194,9 +158,7 @@ export default {
           // console.logs(response.data)
           // console.logs(Number(response.data.id))
           this.data.push({
-            'ip': this.create_college_name,
-            'source': this.create_dean_name,
-            'content': this.create_content,
+            'tag': this.create_tag,
             'id': Number(response.data.id)
           })
         }).catch(error => {
@@ -207,54 +169,6 @@ export default {
         this.errorInfoBox('不能存在输入为空')
       }
     },
-    changeData (id, ip) {
-      // 修改数据
-      if (this.update_dean_name && this.update_content && this.update_dean_id) {
-        axios.put(host + '/college/' + id + '/', JSON.parse(JSON.stringify(
-          {
-            'name': ip,
-            'dean_id': this.update_dean_id,
-            'dean_name': this.update_dean_name,
-            'content': this.update_content
-          })), {
-          headers: {
-            'Authorization': 'Bearer ' + this.token
-          },
-          responseType: 'json'
-        }).then(response => {
-          for (let i = 0; i < this.data.length; i++) {
-            if (this.data[i].id === id) { // 修改
-              this.data[i].source = this.update_dean_name
-              this.data[i].content = this.update_content
-              break
-            }
-          }
-        }).catch(error => {
-          alert(error.response.data.message)
-          console.log(error.response.data.message)
-        })
-      } else {
-        this.errorInfoBox('不能存在输入为空')
-      }
-    },
-    removeData (id) {
-      // 删除数据
-      axios.delete(host + '/college/' + id + '/', {
-        headers: {
-          'Authorization': 'Bearer ' + this.token
-        },
-        responseType: 'json'
-      }).then(response => {
-        for (let i = 0; i < this.data.length; i++) {
-          if (this.data[i].id === id) { // 从数组中移除地址
-            this.data.splice(i, 1)
-            break
-          }
-        }
-      }).catch(error => {
-        console.log(error.response.data)
-      })
-    },
     search_data () { // 通过v-model绑定的textcontent获取文本内容，通过下滑框对应的value1获取下拉框选择的对象  搜索数据
       if (!this.textcontent) {
         this.handleSingle('欢迎使用GDUT DBA', '龙洞小助手提醒您搜索内容请有所输入，否则还是原信息')
@@ -263,25 +177,21 @@ export default {
         }
       } else {
         let param = ''
-        if (this.value1 === 'ip') {
-          param = {college_name: this.textcontent}
-        } else if (this.value1 === 'source') {
-          param = {dean_name: this.textcontent}
-        } else if (this.value1 === 'content') {
-          param = {content: this.textcontent}
+        if (this.value1 === 'tag') {
+          param = {tag: this.textcontent, num: 101}
         } else {
           alert('操作客户端变量被篡改的风险，请刷新页面')
         }
 
-        axios.get(host + '/college/search/', { // 获取data列表中的数据
+        axios.get(host + '/api/v1/questions/list_hot_tag/', { // 获取data列表中的数据
           headers: {
             'Authorization': 'Bearer ' + this.token
           },
           responseType: 'json',
           params: param
         }).then(response => {
-          console.log('筛选的学院信息：' + response.data)
-          this.data = response.data.college // 列表的数据和data是绑一起的
+          console.log('筛选的学院信息：' + response.data.results)
+          this.data = response.data.results // 列表的数据和data是绑一起的
           this.pagination['count'] = this.data.length
           this.cur_getData = false
           this.getPageData()
@@ -322,14 +232,8 @@ export default {
       // 下载模板
       window.location.href = uri + window.btoa(unescape(encodeURIComponent(template))) // +后是编码
     },
-    option_college () { // 根据下化框选择学院
-      this.value1 = 'ip'
-    },
-    option_dean () { // 根据下化框选择院长
-      this.value1 = 'source'
-    },
-    option_infor () { // 根据下化框选择信息
-      this.value1 = 'content'
+    option_tag () { // 根据下化框选择标签
+      this.value1 = 'tag'
     },
     toggleTableSize () { // 调整尺寸函数
       const size = ['small', 'medium', 'large']

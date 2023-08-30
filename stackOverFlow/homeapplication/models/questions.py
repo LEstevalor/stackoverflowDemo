@@ -1,12 +1,14 @@
 from django.db import models
 
 from stackOverFlow.base import BaseModel
-from stackOverFlow.homeapplication.managers.questions import QuestionManager
+from stackOverFlow.homeapplication.managers.questions import QuestionManager, TagsQuestionManager
 
 
 class TagsQuestion(BaseModel):
     """标签类"""
     tag = models.CharField(verbose_name="标签名称", max_length=25, db_index=True)
+
+    objects = TagsQuestionManager()
 
     class Meta:
         db_table = 'sof_tags_question'

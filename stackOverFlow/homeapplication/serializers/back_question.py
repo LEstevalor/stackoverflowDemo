@@ -22,6 +22,10 @@ class BackQuestionUpdateSerializer(serializers.Serializer):
     content = serializers.CharField(help_text="内容")
 
 
+class BackListSerializer(serializers.Serializer):
+    results = BackQuestionSerializer(many=True, help_text="回帖列表")
+
+
 class BackUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BackUser

@@ -52,11 +52,13 @@ class UniqueView(APIView):
 class RealNameView(APIView):
     """用户信息视图"""
     def get(self, request):
-        username = request.GET.get("username")
-        username = User.objects.get(username=username)
-        if username is not None:
-            return Response({'message': username}, status=status.HTTP_200_OK)
-        return Response({'message': 'username错误'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            username = request.GET.get("username")
+            username = User.objects.get(username=username).username
+            if username:
+                return Response({'message': username}, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({'message': 'username错误'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserView(RetrieveAPIView):

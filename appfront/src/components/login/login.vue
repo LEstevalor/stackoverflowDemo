@@ -2,7 +2,7 @@
   <div id='logintwo'>
     <div class='avue-home' v-if='loading' style='z-index: 99;'>
       <div class='avue-home__main'>
-        <img class='avue-home__loading' src='../assets/loading-spin.svg' alt='loading'>
+        <img class='avue-home__loading' src='../../assets/loading-spin.svg' alt='loading'>
         <div class='avue-home__title'>
           GDUT龙洞小助手努力加载中...
         </div>
@@ -57,7 +57,7 @@
 <script>
 import {bkInput} from 'bk-magic-vue'
 import axios from 'axios'
-import {host} from '../../static/js/host'
+import {host} from '../../../static/js/host'
 
 export default {
   components: {
@@ -181,7 +181,7 @@ export default {
     },
     check_before_email () {
       if (this.check_error_username()) {
-        this.warningInfoBox('请输入正确admin或学号或职工号')
+        this.warningInfoBox('请输入不超过20位的账号')
         return false
       } else if (!this.password || this.password.length < 6) {
         this.warningInfoBox('请输入密码且密码大于等于6位')
@@ -390,7 +390,7 @@ input {
   width: 100%;
   height: 100%;
   background-size: 100% 100%;
-  background-image: url('../assets/gdutDragon.jpg');
+  background-image: url('../../assets/gdutDragon.jpg');
   background-repeat: no-repeat;
   background-position: center center;
   overflow: auto;

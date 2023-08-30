@@ -10,8 +10,8 @@ import bkMagic from 'bk-magic-vue'
 import 'bk-magic-vue/dist/bk-magic-vue.min.css'
 // 时钟CSDN GITHUB
 import fx67llClock from 'fx67ll-clock'
-Vue.use(fx67llClock)
 
+Vue.use(fx67llClock)
 Vue.use(bkMagic)
 
 Vue.config.productionTip = false
