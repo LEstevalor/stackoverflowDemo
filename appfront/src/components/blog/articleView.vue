@@ -1,13 +1,5 @@
 <template>
-  <div class="me-view-body" title :data-title="article.title">
     <bk-container class="me-view-container">
-      <bk-aside class="me-area">
-        <ul class="me-operation-list">
-        <li class="me-operation-item">
-        <bk-button type="primary" icon="bk-icon"></bk-button>
-        </li>
-        </ul>
-      </bk-aside>
       <bk-main>
         <div class="me-view-card">
           <h1 class="me-view-title">{{ article.title }}</h1>
@@ -18,7 +10,7 @@
             <div class="me-view-info">
               <span>{{ article.username }}</span>
               <div class="me-view-meta">
-                <span>{{ article.create_time }}</span>
+                <span>{{ formatDate(article.create_time) }}</span>
                 <span>赞同   {{ article.upvotes }}</span>
                 <span>不赞同   {{ article.downvotes }}</span>
               </div>
@@ -50,10 +42,11 @@
             <!--            <bk-button @click="tagOrCategory('tag', t.id)" size="mini" type="primary" v-for="t in article.tags"-->
             <!--                       :key="t.id" round plain>{{ t.tag }}-->
             <!--            </bk-button>-->
-            <bk-button @click="tagOrCategory('tag', article.id)" type="primary" -->
+            <bk-button @click="tagOrCategory('tag', article.id)" type="primary">
               {{ article.tag }}
             </bk-button>
           </div>
+
           <div class="me-view-comment">
             <div class="me-view-comment-write">
               <bk-row :gutter="20">
@@ -101,13 +94,13 @@
       </bk-main>
 
     </bk-container>
-  </div>
 </template>
 
 <script>
 import {bkContainer, bkMain, bkButton, bkCol, bkRow, bkInput, bkAside} from 'bk-magic-vue'
 import MarkdownEditor from './MarkdownEditor'
 import CommmentItem from './CommentItem'
+import {formatDate} from '../../api/time'
 // import {viewArticle} from '@/api/article'
 // import {getCommentsByArticle, publishComment} from '@/api/comment'
 import default_avatar from '../../assets/user.png'
@@ -161,6 +154,9 @@ export default {
     }
   },
   methods: {
+    formatDate(time) {
+      return formatDate(time)
+    },
     tagOrCategory(type, id) {
       this.$router.push({path: `/${type}/${id}`})
     },
@@ -225,9 +221,6 @@ export default {
           that.$message({type: 'error', message: '评论加载失败', showClose: true})
         }
       })
-    },
-    commentCountsIncrement() {
-      this.article.commentCounts += 1
     }
   },
   components: {
@@ -247,12 +240,8 @@ export default {
 </script>
 
 <style>
-.me-view-body {
-  margin: 200px auto 140px;
-}
-
 .me-view-container {
-  width: 800px;
+  width: 1600px;
 }
 
 .bk-main {
@@ -267,7 +256,7 @@ export default {
 
 .me-view-author {
   /*margin: 30px 0;*/
-  margin-top: 30px;
+  margin-top: 20px;
   vertical-align: middle;
 }
 
@@ -292,21 +281,17 @@ export default {
 }
 
 .me-view-end {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .me-view-tag {
-  margin-top: 20px;
+  margin-top: 10px;
   padding-left: 6px;
   border-left: 4px solid #c5cac3;
 }
 
-.me-view-tag-item {
-  margin: 0 4px;
-}
-
 .me-view-comment {
-  margin-top: 60px;
+  margin-top: 40px;
 }
 
 .me-view-comment-title {

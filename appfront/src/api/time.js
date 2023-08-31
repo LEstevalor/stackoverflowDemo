@@ -16,3 +16,12 @@ export function formatTime(time) {
 
   return time
 }
+
+/*数据库时间变为年月日时间*/
+export function formatDate(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}

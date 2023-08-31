@@ -19,13 +19,27 @@
               @page-change="handlePageChange"
               @page-limit-change="handlePageLimitChange">
       <bk-table-column prop="title" label="Question">
-          <template #default="{ row }">
-    <span class="bold-text">{{ row.title }}</span>
-  </template>
+        <template #default="{ row }">
+          <button class="tech-button" @click="articleView(row.id)">
+            <span class="bold-text">{{ row.title }}</span>
+          </button>
+        </template>
       </bk-table-column>
-      <bk-table-column prop="username" label="User"></bk-table-column>
-      <bk-table-column prop="update_time" label="UpdateTime"></bk-table-column>
-      <bk-table-column prop="tag" label="Tag"></bk-table-column>
+      <bk-table-column prop="username" label="User">
+        <template #default="{ row }">
+          <span class="bold-text">{{ row.username }}</span>
+        </template>
+      </bk-table-column>
+      <bk-table-column prop="update_time" label="UpdateTime">
+        <template #default="{ row }">
+          <span class="bold-text_w">{{ formatDate(row.update_time) }}</span>
+        </template>
+      </bk-table-column>
+      <bk-table-column prop="tag" label="Tag">
+        <template #default="{ row }">
+          <span class="bold-text_w">{{ row.tag }}</span>
+        </template>
+      </bk-table-column>
       <bk-table-column prop="upvotes" label="Upvote"></bk-table-column>
       <bk-table-column prop="downvotes" label="Downvote"></bk-table-column>
     </bk-table>
@@ -36,6 +50,7 @@
 import {bkTable, bkTableColumn, bkButton, bkInput} from 'bk-magic-vue'
 import axios from "axios";
 import {host} from "../../static/js/host";
+import {formatDate} from '../api/time';
 
 export default {
   name: "top_question",
@@ -60,20 +75,27 @@ export default {
     };
   },
   methods: {
+    formatDate(time) {
+      return formatDate(time)
+    },
+    articleView(id) {
+      console.log(id)
+      this.$router.push(`/articleView/${id}`)
+    },
     searchQuestions() {
       axios.get(host + '/api/v1/questions/', { // 获取data列表中的数据
-          headers: {
-            'Authorization': 'Bearer ' + this.token
-          },
-          responseType: 'json'
-        }).then(response => {
-          this.data = response.data.results // 列表的数据和data是绑一起的
-          this.pagination.count = this.data.length
-          this.getPageData()
+        headers: {
+          'Authorization': 'Bearer ' + this.token
+        },
+        responseType: 'json'
+      }).then(response => {
+        this.data = response.data.results // 列表的数据和data是绑一起的
+        this.pagination.count = this.data.length
+        this.getPageData()
+      })
+        .catch(error => {
+          console.log(error.response.data)
         })
-          .catch(error => {
-            console.log(error.response.data)
-          })
     },
     // 以下连续三个用于分页的函数
     getPageData() { // 分页操作显示列表
@@ -102,8 +124,12 @@ export default {
 
 <style scoped>
 .bold-text {
-  font-weight: bold;  /*加粗*/
-  font-style: italic;  /*斜体*/
+  font-weight: bold; /*加粗*/
+  font-style: italic; /*斜体*/
+}
+
+.bold-text_w {
+  font-weight: bold; /*加粗*/
 }
 
 .search-container {
@@ -136,5 +162,55 @@ export default {
   width: 100%;
   max-width: 600px;
   margin-right: 1rem;
+}
+
+/*让按钮变丰富*/
+.tech-button {
+  background-image: linear-gradient(135deg, #fad540, #fa8431);
+  border: none;
+  border-radius: 5px;
+  color: #3f4eee;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition-duration: 0.4s;
+}
+
+.tech-button:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(135deg, #9c27b0, #f50057);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.tech-button:hover:before {
+  opacity: 1;
+}
+
+.tech-button:hover {
+  color: #ffffff;
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(249, 0, 87, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(249, 0, 87, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(249, 0, 87, 0);
+  }
 }
 </style>
