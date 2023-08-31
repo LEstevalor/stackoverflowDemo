@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Q
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -47,6 +47,13 @@ class QuestionManager(models.Manager):
         FollowQuestion.objects.filter(back_question__in=back_question.values_list("id", flat=True))
         back_question.delete()
         return question.delete()
+
+    def all_search(self, title):
+        """查询贴（包含题目的模糊查询）"""
+        if not title:
+            return self.all()
+        else:
+            return self.filter(Q(title__icontains=title))
 
     def get_related_questions(self, question, limit=10):
         """相关性分析获取问题列表"""

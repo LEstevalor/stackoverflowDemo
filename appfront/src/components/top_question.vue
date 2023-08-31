@@ -13,8 +13,10 @@
         @click="searchQuestions"
       ></bk-button>
     </div>
-    <bk-table style="margin-top: 15px;"
+    <bk-table
+              style="margin-top: 15px;"
               :data="page_data"
+              :outer-border="false"
               :pagination="pagination"
               @page-change="handlePageChange"
               @page-limit-change="handlePageLimitChange">
@@ -87,7 +89,8 @@ export default {
         headers: {
           'Authorization': 'Bearer ' + this.token
         },
-        responseType: 'json'
+        responseType: 'json',
+        params: {"title": this.searchQuery}
       }).then(response => {
         this.data = response.data.results // 列表的数据和data是绑一起的
         this.pagination.count = this.data.length
@@ -212,5 +215,20 @@ export default {
   100% {
     box-shadow: 0 0 0 0 rgba(249, 0, 87, 0);
   }
+}
+
+/*去表格边框*/
+.no-border-table .bk-table-wrapper {
+  border: none !important;
+}
+
+.no-border-table .bk-table-header {
+  border-bottom: none !important;
+}
+
+.no-border-table .bk-table-bordered td,
+.no-border-table .bk-table-bordered th {
+  border: none !important;
+  background-color: transparent;
 }
 </style>

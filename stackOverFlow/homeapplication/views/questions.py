@@ -97,7 +97,7 @@ class QuestionViewSet(GenericViewSet):
     )
     def list(self, request, *args, **kwargs):
         try:
-            questions = Question.objects.all()
+            questions = Question.objects.all_search(title=request.GET.get("title"))
         except Exception:
             logger.exception("问题搜查失败")
             raise error_codes.QUESTION_LIST_FAILED
