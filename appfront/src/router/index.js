@@ -4,7 +4,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     // {
     //   path: '/',
@@ -75,4 +75,18 @@ export default new Router({
       // component: login
     }
   ]
-})
+});
+
+router.beforeEach((to, from, next) => {
+  // 检查用户是否已登录
+  const token = localStorage.getItem('token');
+  const isLoggedIn = !!token;
+  // 如果用户未登录且试图访问非登录页面，则重定向到登录页面
+  if (!isLoggedIn && to.path !== '/login') {
+    next('/login');
+  } else {
+    next();
+  }
+});
+
+export default router;

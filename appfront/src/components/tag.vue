@@ -60,6 +60,11 @@ export default {
     // this.getCategorys()
     this.getTags()
   },
+  mounted() {
+    if (!this.token) {
+      this.$router.push('/login')
+    }
+  },
   data() {
     return {
       selectedTab: '文章分类',

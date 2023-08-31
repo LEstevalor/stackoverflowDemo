@@ -1,99 +1,99 @@
 <template>
-    <bk-container class="me-view-container">
-      <bk-main>
-        <div class="me-view-card">
-          <h1 class="me-view-title">{{ article.title }}</h1>
-          <div class="me-view-author">
-            <a class="">
-              <img class="me-view-picture" :src="avatar"></img>
-            </a>
-            <div class="me-view-info">
-              <span>{{ article.username }}</span>
-              <div class="me-view-meta">
-                <span>{{ formatDate(article.create_time) }}</span>
-                <span>赞同   {{ article.upvotes }}</span>
-                <span>不赞同   {{ article.downvotes }}</span>
-              </div>
-
-            </div>
-            <bk-button
-              @click="editArticle()"
-              style="position: absolute;left: 60%;"
-              round
-              icon="bk-icon-edit">编辑
-            </bk-button>
-          </div>
-          <div class="me-view-content">
-            <markdown-editor :editor=article.editor></markdown-editor>
-          </div>
-
-          <div class="me-view-end">
-            <bk-alert
-              title="文章End..."
-              type="success"
-              center
-              :closable="false">
-            </bk-alert>
-          </div>
-
-          <div class="me-view-tag">
-            标签：
-            <!--<el-tag v-for="t in article.tags" :key="t.id" class="me-view-tag-item" size="mini" type="success">{{t.tagName}}</el-tag>-->
-            <!--            <bk-button @click="tagOrCategory('tag', t.id)" size="mini" type="primary" v-for="t in article.tags"-->
-            <!--                       :key="t.id" round plain>{{ t.tag }}-->
-            <!--            </bk-button>-->
-            <bk-button @click="tagOrCategory('tag', article.id)" type="primary">
-              {{ article.tag }}
-            </bk-button>
-          </div>
-
-          <div class="me-view-comment">
-            <div class="me-view-comment-write">
-              <bk-row :gutter="20">
-                <bk-col :span="2">
-                  <a class="">
-                    <img class="me-view-picture" :src="avatar"/>
-                  </a>
-                </bk-col>
-                <bk-col :span="22">
-                  <bk-input
-                    type="textarea"
-                    :autosize="{ minRows: 2}"
-                    placeholder="你的评论..."
-                    class="me-view-comment-text"
-                    v-model="comment.content"
-                    resize="none">
-                  </bk-input>
-                </bk-col>
-              </bk-row>
-
-              <bk-row :gutter="20">
-                <bk-col :span="2" :offset="22">
-                  <bk-button type="text" @click="publishComment()">评论</bk-button>
-                </bk-col>
-              </bk-row>
+  <bk-container class="me-view-container">
+    <bk-main>
+      <div class="me-view-card">
+        <h1 class="me-view-title">{{ article.title }}</h1>
+        <div class="me-view-author">
+          <a class="">
+            <img class="me-view-picture" :src="avatar"></img>
+          </a>
+          <div class="me-view-info">
+            <span>{{ article.username }}</span>
+            <div class="me-view-meta">
+              <span>{{ formatDate(article.create_time) }}</span>
+              <span>赞同   {{ article.upvotes }}</span>
+              <span>不赞同   {{ article.downvotes }}</span>
             </div>
 
-            <div class="me-view-comment-title">
-              <span>{{ article.commentCounts }} 条评论</span>
-            </div>
-
-            <commment-item
-              v-for="(c,index) in comments"
-              :comment="c"
-              :articleId="article.id"
-              :index="index"
-              :rootCommentCounts="comments.length"
-              @commentCountsIncrement="commentCountsIncrement"
-              :key="c.id">
-            </commment-item>
-
           </div>
+          <bk-button
+            @click="editArticle()"
+            style="position: absolute;left: 60%;"
+            round
+            icon="bk-icon-edit">编辑
+          </bk-button>
+        </div>
+        <div class="me-view-content">
+          <markdown-editor :editor=article.editor></markdown-editor>
+        </div>
+
+        <div class="me-view-end">
+          <bk-alert
+            title="文章End..."
+            type="success"
+            center
+            :closable="false">
+          </bk-alert>
+        </div>
+
+        <div class="me-view-tag">
+          标签：
+          <!--<el-tag v-for="t in article.tags" :key="t.id" class="me-view-tag-item" size="mini" type="success">{{t.tagName}}</el-tag>-->
+          <!--            <bk-button @click="tagOrCategory('tag', t.id)" size="mini" type="primary" v-for="t in article.tags"-->
+          <!--                       :key="t.id" round plain>{{ t.tag }}-->
+          <!--            </bk-button>-->
+          <bk-button @click="tagOrCategory('tag', article.id)" type="primary">
+            {{ article.tag }}
+          </bk-button>
+        </div>
+
+        <div class="me-view-comment">
+          <div class="me-view-comment-write">
+            <bk-row :gutter="20">
+              <bk-col :span="2">
+                <a class="">
+                  <img class="me-view-picture" :src="avatar"/>
+                </a>
+              </bk-col>
+              <bk-col :span="22">
+                <bk-input
+                  type="textarea"
+                  :autosize="{ minRows: 2}"
+                  placeholder="你的评论..."
+                  class="me-view-comment-text"
+                  v-model="comment.content"
+                  resize="none">
+                </bk-input>
+              </bk-col>
+            </bk-row>
+
+            <bk-row :gutter="20">
+              <bk-col :span="2" :offset="22">
+                <bk-button type="text" @click="publishComment()">评论</bk-button>
+              </bk-col>
+            </bk-row>
+          </div>
+
+          <div class="me-view-comment-title">
+            <span>{{ article.commentCounts }} 条评论</span>
+          </div>
+
+          <commment-item
+            v-for="(c,index) in comments"
+            :comment="c"
+            :articleId="article.id"
+            :index="index"
+            :rootCommentCounts="comments.length"
+            @commentCountsIncrement="commentCountsIncrement"
+            :key="c.id">
+          </commment-item>
 
         </div>
-      </bk-main>
 
-    </bk-container>
+      </div>
+    </bk-main>
+
+  </bk-container>
 </template>
 
 <script>
