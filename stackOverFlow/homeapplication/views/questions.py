@@ -105,6 +105,19 @@ class QuestionViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         tags=["问题 Question"],
+        operation_summary="根据问题ID获取问题"
+    )
+    @action(detail=False, methods=["GET"])
+    def get_question(self, request, *args, **kwargs):
+        try:
+            question = get_object_or_404(Question, pk=request.GET.get("question_id"))
+        except Exception:
+            logger.exception("问题搜查失败")
+            raise error_codes.QUESTION_LIST_FAILED
+        return Response(QuestionSerializer(question).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["问题 Question"],
         operation_summary="获取相关问题列表"
     )
     @action(detail=True, methods=["POST"])

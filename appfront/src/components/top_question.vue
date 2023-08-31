@@ -18,7 +18,11 @@
               :pagination="pagination"
               @page-change="handlePageChange"
               @page-limit-change="handlePageLimitChange">
-      <bk-table-column prop="title" label="Question"></bk-table-column>
+      <bk-table-column prop="title" label="Question">
+          <template #default="{ row }">
+    <span class="bold-text">{{ row.title }}</span>
+  </template>
+      </bk-table-column>
       <bk-table-column prop="username" label="User"></bk-table-column>
       <bk-table-column prop="update_time" label="UpdateTime"></bk-table-column>
       <bk-table-column prop="tag" label="Tag"></bk-table-column>
@@ -97,6 +101,11 @@ export default {
 </script>
 
 <style scoped>
+.bold-text {
+  font-weight: bold;  /*加粗*/
+  font-style: italic;  /*斜体*/
+}
+
 .search-container {
   max-width: 1500px;
   margin: 0 auto;

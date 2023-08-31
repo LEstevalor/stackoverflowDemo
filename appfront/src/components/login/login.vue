@@ -23,29 +23,37 @@
                 <i class='bk-icon icon-info-circle-shape'></i>
             </span>
           </p>
+          <p>
+            <label id="rememberMeLabel">
+              <input id="rememberMe" v-model="rememberMe" type="checkbox"> 记住密码
+            </label>
+          </p>
           <div style='text-align: center;margin-top: 35px;'>
-              <input type='submit' class='button' value='Login up' @click.prevent='handleSubmit'>
-              <input type='reset' class='button' value='Reset'>
-              <input type='submit' class='button' value='Register' @click.prevent='register'>
+            <input type='submit' class='button' value='Login up' @click.prevent='handleSubmit'>
+            <input type='reset' class='button' value='Reset'>
+            <input type='submit' class='button' value='Register' @click.prevent='register'>
           </div>
         </form>
       </div>
       <div v-show='page==="register"' class='login-modal' id='loginDiv2'>
         <form>
           <h1 style='text-align: center;color: aliceblue;'> WELCOME TO GDUT</h1>
-          <p>  账 号: <input id='username2' v-model="username" type='text'></p>
-          <p>  密 码: <input id='password2' v-model="password" type='password'></p>
+          <p> 账 号: <input id='username2' v-model="username" type='text'></p>
+          <p> 密 码: <input id='password2' v-model="password" type='password'></p>
           <p>重输密码: <input id='password22' v-model="password2" type='password'></p>
-          <p>  邮 箱: <input id='email' v-model="email" type='text'></p>
+          <p> 邮 箱: <input id='email' v-model="email" type='text'></p>
           <p><label>验证码:</label>
-          <input type="text" v-model="sms_code" @blur="check_sms_code" name="msg_code" id="msg_code" class="msg_input">
-            <bk-button ext-cls="mr5" @click="send_sms_code" theme="primary" title="提交" class="get_msg_code">{{ sms_code_tip }}</bk-button>
+            <input type="text" v-model="sms_code" @blur="check_sms_code" name="msg_code" id="msg_code"
+                   class="msg_input">
+            <bk-button ext-cls="mr5" @click="send_sms_code" theme="primary" title="提交" class="get_msg_code">
+              {{ sms_code_tip }}
+            </bk-button>
           </p>
 
           <div style='text-align: center;margin-top: 35px;'>
-              <input type='submit' class='button' value='Register' @click.prevent='trueRegister'>
-              <input type='reset' class='button' value='Reset'>
-              <input type='submit' class='button' value='Back login' @click.prevent='backLogin'>
+            <input type='submit' class='button' value='Register' @click.prevent='trueRegister'>
+            <input type='reset' class='button' value='Reset'>
+            <input type='submit' class='button' value='Back login' @click.prevent='backLogin'>
           </div>
         </form>
       </div>
@@ -64,7 +72,7 @@ export default {
     bkInput
   },
   name: 'login',
-  data () {
+  data() {
     return {
       page: 'login',
       loading: true,
@@ -79,22 +87,30 @@ export default {
       check_send_code_res: false,
       loginForm: {
         username: '', // 用户名
-        password: '' // 密码
+        password: '', // 密码
+        rememberMe: false,  // 记住密码
       }
     }
   },
-  mounted () {
+  mounted() {
     let that = this
     setTimeout(function () {
       that.loading = false
     }, 500)
+    if (localStorage.rememberMe !== 'true') {
+      localStorage.clear()
+    } else {
+      this.username = localStorage.username;
+      this.password = localStorage.password;
+      this.rememberMe = true;
+    }
   },
   methods: {
-    check_error_username () {
+    check_error_username() {
       // console.log(this.username.length)
       return !this.username || !(this.username.length < 20)
     },
-    handleSubmit () {
+    handleSubmit() {
       if (this.check_error_username()) {
         this.warningInfoBox('请输入不超过20位的用户名')
       } else if (!this.password) {
@@ -108,6 +124,18 @@ export default {
           // 记住登录
           sessionStorage.clear()
           localStorage.clear()
+          // 记住密码
+          if (this.rememberMe) {
+            // 如果用户选择记住密码，将用户名和密码保存到localStorage
+            localStorage.setItem("username", this.username);
+            localStorage.setItem("password", this.password);
+            localStorage.setItem("rememberMe", true);
+          } else {
+            // 如果用户取消记住密码，从localStorage中删除用户名和密码
+            localStorage.removeItem("username");
+            localStorage.removeItem("password");
+            localStorage.removeItem("rememberMe");
+          }
           localStorage.token = response.data.token
           localStorage.username = response.data.username
           this.$router.push('/top') // 根据index.js的路由跳转到top.vue
@@ -126,7 +154,7 @@ export default {
         })
       }
     },
-    handleLogin () {
+    handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.page = 'login'
@@ -138,20 +166,20 @@ export default {
         }
       })
     },
-    register () {
+    register() {
       this.username = ''
       this.password = ''
       this.page = 'register'
     },
-    backLogin () {
+    backLogin() {
       this.username = ''
       this.password = ''
       this.page = 'login'
     },
-    check_sms_code () {
+    check_sms_code() {
       return !this.sms_code
     },
-    send_sms_code () {
+    send_sms_code() {
       if (this.send_flag && this.check_before_email()) {
         this.send_flag = false // 60s后才允许再次发送
         // console.logs(host + '/email_codes/' + this.email + '/')
@@ -170,16 +198,16 @@ export default {
               }
             }, 1000, 60)
           }).catch(error => {
-            if (error.response.status === 400) {
-              this.errorInfoBox(error.response.data.message) // 展示发送短信错误提示
-            } else {
-              console.log(error.response.data)
-            }
-            this.send_flag = true
-          })
+          if (error.response.status === 400) {
+            this.errorInfoBox(error.response.data.message) // 展示发送短信错误提示
+          } else {
+            console.log(error.response.data)
+          }
+          this.send_flag = true
+        })
       }
     },
-    check_before_email () {
+    check_before_email() {
       if (this.check_error_username()) {
         this.warningInfoBox('请输入不超过20位的账号')
         return false
@@ -196,13 +224,15 @@ export default {
         return true
       }
     },
-    check_send_code () { // 验证码校验
+    check_send_code() { // 验证码校验
       if (this.sms_code === '' || this.sms_code.length !== 6) {
         this.warningInfoBox('验证码错误')
         return
       }
-      axios.get(host + '/api/v1/users/email_verify/', {responseType: 'json',
-        params: {sms_code: this.sms_code, email: this.email}})
+      axios.get(host + '/api/v1/users/email_verify/', {
+        responseType: 'json',
+        params: {sms_code: this.sms_code, email: this.email}
+      })
         .then(response => {
           this.check_send_code_res = true
           this.successInfoBox('验证码正确√')
@@ -216,9 +246,11 @@ export default {
           this.check_send_code_res = false
         })
     },
-    check_unique_username () { // 账号是否注册过
-      axios.get(host + '/api/v1/user/unique/', {responseType: 'json',
-        params: {username: this.username, str: 'username'}})
+    check_unique_username() { // 账号是否注册过
+      axios.get(host + '/api/v1/user/unique/', {
+        responseType: 'json',
+        params: {username: this.username, str: 'username'}
+      })
         .then(response => {
           if (response.data.count > 0) {
             this.errorInfoBox('账号已注册过')
@@ -228,13 +260,15 @@ export default {
             this.check_unique_username_res = true
           }
         }).catch(error => {
-          console.log(error.response.data)
-          this.check_unique_username_res = false
-        })
+        console.log(error.response.data)
+        this.check_unique_username_res = false
+      })
     },
-    check_unique_email () { // 邮箱是否唯一
-      axios.get(host + '/api/v1/user/unique/', {responseType: 'json',
-        params: {email: this.email, str: 'email'}})
+    check_unique_email() { // 邮箱是否唯一
+      axios.get(host + '/api/v1/user/unique/', {
+        responseType: 'json',
+        params: {email: this.email, str: 'email'}
+      })
         .then(response => {
           if (response.data.count > 0) {
             this.errorInfoBox('邮箱已注册过')
@@ -244,11 +278,11 @@ export default {
             this.check_unique_email_res = true
           }
         }).catch(error => {
-          console.log(error.response.data)
-          this.check_unique_email_res = false
-        })
+        console.log(error.response.data)
+        this.check_unique_email_res = false
+      })
     },
-    trueRegister () { // 注册
+    trueRegister() { // 注册
       if (this.check_before_email()) { // 填了前面的信息，后面的邮箱验证码校验才有意义
         this.check_unique_username()
         this.check_unique_email()
@@ -285,16 +319,16 @@ export default {
         }
       }
     },
-    warningInfoBox (msg) {
+    warningInfoBox(msg) {
       this.$bkInfo({
         type: 'warning',
         title: msg,
-        cancelFn (vm) {
+        cancelFn(vm) {
           console.warn(vm)
         }
       })
     },
-    errorInfoBox (msg) {
+    errorInfoBox(msg) {
       const a = this.$bkInfo({
         type: 'error',
         title: 'Fail:' + msg,
@@ -310,7 +344,7 @@ export default {
         }
       }, 1000)
     },
-    successInfoBox (msg) {
+    successInfoBox(msg) {
       const h = this.$createElement
       const a = this.$bkInfo({
         type: 'success',
@@ -338,55 +372,59 @@ export default {
 
 <style scoped>
 #loginDiv {
-    width: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 45%;
-    background-color: rgba(75, 81, 95, 0.3);
-    box-shadow: 7px 7px 17px rgba(52, 56, 66, 0.5);
-    border-radius: 10px;
-}
-#loginDiv2 {
-    width: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70%;
-    background-color: rgba(75, 81, 95, 0.3);
-    box-shadow: 7px 7px 17px rgba(52, 56, 66, 0.5);
-    border-radius: 10px;
-}
-p {
-    margin-top: 50px;
-    margin-left: 50px;
-    color: #e85404;
-    font-size: 18px;
-    font-weight: bold;
-}
-input {
-    margin-left: 20px;
-    border-radius: 12px;
-    border-style: hidden;
-    height: 40px;
-    width: 300px;
-    background-color: rgba(210, 183, 210, 0.5);
-    outline: none;
-    color: #3f4eee;
-    padding-left: 5px;
-}
-.button {
-    border-color: cornsilk;
-    background-color: rgba(100, 149, 237, .7);
-    color: aliceblue;
-    border-style: hidden;
-    border-radius: 5px;
-    width: 100px;
-    height: 31px;
-    font-size: 16px;
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 45%;
+  background-color: rgba(75, 81, 95, 0.3);
+  box-shadow: 7px 7px 17px rgba(52, 56, 66, 0.5);
+  border-radius: 10px;
 }
 
-#logintwo{
+#loginDiv2 {
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70%;
+  background-color: rgba(75, 81, 95, 0.3);
+  box-shadow: 7px 7px 17px rgba(52, 56, 66, 0.5);
+  border-radius: 10px;
+}
+
+p {
+  margin-top: 50px;
+  margin-left: 50px;
+  color: #e85404;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+input {
+  margin-left: 20px;
+  border-radius: 12px;
+  border-style: hidden;
+  height: 40px;
+  width: 300px;
+  background-color: rgba(210, 183, 210, 0.5);
+  outline: none;
+  color: #3f4eee;
+  padding-left: 5px;
+}
+
+.button {
+  border-color: cornsilk;
+  background-color: rgba(100, 149, 237, .7);
+  color: aliceblue;
+  border-style: hidden;
+  border-radius: 5px;
+  width: 100px;
+  height: 31px;
+  font-size: 16px;
+}
+
+#logintwo {
   width: 100%;
   height: 100%;
   background-size: 100% 100%;
@@ -397,11 +435,13 @@ input {
   position: fixed;
   line-height: 100%;
 }
-.logo img{
+
+.logo img {
   width: 32px;
   height: 32px;
   margin: 14px 10px 0 15px;
 }
+
 .avue-home {
   /*background-color: #303133;*/
   background-color: rgba(39, 51, 59, 1.0);
@@ -409,6 +449,7 @@ input {
   display: flex;
   flex-direction: column;
 }
+
 .avue-home__main {
   user-select: none;
   width: 100%;
@@ -418,40 +459,48 @@ input {
   align-items: center;
   flex-direction: column;
 }
-.avue-home__footer>a {
+
+.avue-home__footer > a {
   font-size: 12px;
   color: #ABABAB;
   text-decoration: none;
 }
+
 .avue-home__loading {
   height: 32px;
   width: 32px;
   margin-bottom: 20px;
 }
+
 .avue-home__title {
   color: #FFF;
   font-size: 14px;
   margin-bottom: 10px;
 }
-::-webkit-scrollbar{
+
+::-webkit-scrollbar {
   width: 7px;
   height: 7px;
   display: none;
   background-color: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background-color: rgba(39, 51, 59, 1.0);
 
 }
+
 ::-webkit-scrollbar-track-piece {
   background-color: transparent;
 }
-a{
+
+a {
   color: #FFFFFF;
   text-decoration: none;
 }
-.login-modal{
+
+.login-modal {
   position: relative;
   width: 420px;
   height: 450px;
@@ -460,5 +509,27 @@ a{
   margin-top: -225px;
   background-color: #FFFFFF;
   border-radius: 5px;
+}
+
+/*确认按钮选项*/
+/* 隐藏默认的复选框 */
+#rememberMe {
+  appearance: none;
+  background-color: #efe4e4;
+  border: 4px solid #490202;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  position: relative;
+  margin-left: 10px;
+}
+
+/* 自定义复选框勾选状态 */
+#rememberMe:checked {
+  background-color: #afe79c;
+  border: 3px solid #340303;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black' width='18px' height='18px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.2l-3.5-3.5a.984.984 0 0 0-1.4 0 .984.984 0 0 0 0 1.4l4.19 4.19c.37.37 1.02.37 1.39 0L20.3 7.7a.984.984 0 0 0 0-1.4.984.984 0 0 0-1.4 0L9 16.2z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
 }
 </style>

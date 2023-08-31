@@ -61,6 +61,11 @@ export default new Router({
           name: 'index.top_question',
           component: () => import('../components/top_question.vue')
         },
+        {
+          path: '/articleView/:id',
+          name: 'index.articleView', // 添加一个名称，例如 'view'
+          component: () => import('../components/blog/articleView.vue')
+        }
       ]
     },
     {
