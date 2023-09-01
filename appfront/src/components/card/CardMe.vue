@@ -4,13 +4,9 @@
     <div class="me-author-description">
       <span><i class="el-icon-location-outline"></i> &nbsp;地球村</span>
       <span><i class="me-icon-job"></i> &nbsp;专业SE</span>
-    </div>
-    <div class="me-author-tool">
-      <i @click="showTool(qq)" :title="qq.title" class="iconfont icon-qq"></i>
-      <i @click="showTool(bilibili)" :title="bilibili.title" class="iconfont icon-bilibili-fill"></i>
+      <span><i class="me-icon-job"></i> &nbsp;作者：LEstevalor</span>
     </div>
   </bk-card>
-
 </template>
 
 <script>
@@ -25,29 +21,17 @@ export default {
     return {
       token: localStorage.token || sessionStorage.token,
       qq: {title: 'QQ', message: '2534891955'},
-      bilibili: {
-        title: 'bilibili',
-        message: '<a target="_blank" href="https://www.baidu.com">https://www.baidu.com</a>'
-      }
     }
   },
-  methods: {
-    showTool(tool) {
-      this.$message({
-        duration: 0,
-        showClose: true,
-        dangerouslyUseHTMLString: true,
-        message: '<strong>' + tool.message + '</strong>'
-      });
-    }
-  }
+  methods: {}
 }
 </script>
 
 <style scoped>
 .me-author-name {
+  margin-top: 0.1px;
   text-align: center;
-  font-size: 30px;
+  font-size: 25px;
   border-bottom: 1px solid #5FB878;
 }
 
@@ -57,16 +41,5 @@ export default {
 
 .me-icon-job {
   padding-left: 16px;
-}
-
-.me-author-tool {
-  text-align: center;
-  padding-top: 10px;
-}
-
-.me-author-tool i {
-  cursor: pointer;
-  padding: 4px 10px;
-  font-size: 30px;
 }
 </style>

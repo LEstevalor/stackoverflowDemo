@@ -1,17 +1,11 @@
 <template>
   <div id="write" v-title :data-title="title">
     <bk-container>
-      <base-header :simple=true>
-        <bk-col :span="4" :offset="2">
-          <div class="me-write-info">写文章</div>
-        </bk-col>
-        <bk-col :span="4" :offset="6">
-          <div class="me-write-btn">
-            <bk-button round @click="publishShow">发布</bk-button>
-            <bk-button round @click="cancel">取消</bk-button>
-          </div>
-        </bk-col>
-      </base-header>
+      <div class="me-write-info">写文章</div>
+      <div class="me-write-btn">
+        <bk-button class="publish-btn" @click="publishShow">发布</bk-button>
+        <bk-button class="cancel-btn" @click="cancel">取消</bk-button>
+      </div>
 
       <bk-container class="me-area me-write-box">
         <bk-main class="me-write-main">
@@ -43,11 +37,6 @@
                       placeholder="请输入摘要">
             </bk-input>
           </bk-form-item>
-          <bk-form-item label="文章分类" prop="category">
-            <bk-select v-model="articleForm.category" value-key="id" placeholder="请选择文章分类">
-              <bk-option v-for="c in categorys" :key="c.id" :label="c.categoryName" :value="c"></bk-option>
-            </bk-select>
-          </bk-form-item>
 
           <bk-form-item label="文章标签" prop="tags">
             <bk-checkbox-group v-model="articleForm.tags">
@@ -65,8 +54,10 @@
 </template>
 
 <script>
-import {bkContainer, bkMain, bkButton, bkCol, bkRow, bkInput, bkAside, bkDialog, bkForm,
-  bkFormItem, bkCheckbox, bkCheckboxGroup, bkSelect, bkOption} from 'bk-magic-vue'
+import {
+  bkContainer, bkMain, bkButton, bkCol, bkRow, bkInput, bkAside, bkDialog, bkForm,
+  bkFormItem, bkCheckbox, bkCheckboxGroup, bkSelect, bkOption
+} from 'bk-magic-vue'
 import BaseHeader from '../BaseHeader'
 import MarkdownEditor from './MarkdownEditor'
 // import {publishArticle, getArticleById} from '@/api/article'
@@ -308,25 +299,54 @@ export default {
 </script>
 
 <style>
-.el-header {
-  position: fixed;
-  z-index: 1024;
-  min-width: 100%;
-  box-shadow: 0 2px 3px hsla(0, 0%, 7%, .1), 0 0 0 1px hsla(0, 0%, 7%, .1);
-}
-
 .me-write-info {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4a4a4a;
   line-height: 60px;
-  font-size: 18px;
-  font-weight: 600;
 }
 
 .me-write-btn {
   margin-top: 10px;
+  display: flex;
+  gap: 1rem;
 }
 
+.publish-btn,
+.cancel-btn {
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.publish-btn {
+  background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+}
+
+.publish-btn:hover {
+  background-image: linear-gradient(to right, #2575fc 0%, #6a11cb 100%);
+}
+
+.cancel-btn {
+  background-color: #f5f5f5;
+  color: #4a4a4a;
+}
+
+.cancel-btn:hover {
+  background-color: #e0e0e0;
+}
+
+
 .me-write-box {
-  max-width: 700px;
+  max-width: 100%;
   margin: 80px auto 0;
 }
 
@@ -345,29 +365,12 @@ export default {
 }
 
 .me-write-editor {
-  min-height: 650px !important;
-}
-
-.me-header-left {
-  margin-top: 10px;
+  min-height: 400px !important;
+  max-height: 520px;
 }
 
 .me-title img {
   max-height: 2.4rem;
   max-width: 100%;
-}
-
-.me-write-toolbar-fixed {
-  position: fixed;
-  width: 700px !important;
-  top: 60px;
-}
-
-.v-note-op {
-  box-shadow: none !important;
-}
-
-.auto-textarea-input, .auto-textarea-block {
-  font-size: 18px !important;
 }
 </style>
