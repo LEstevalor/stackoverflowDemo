@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     view(id) {
-      this.$router.push({path: `/11/${id}`})
+      this.$router.push({path: `/tag/${id}`})
     },
     getTags() {
       console.log("aaaaaaaaaaaaaaaaa")

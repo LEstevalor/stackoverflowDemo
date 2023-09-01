@@ -67,10 +67,20 @@ const router = new Router({
           component: () => import('../components/top_question.vue')
         },
         {
-          path: '/articleView/:id',
+          path: '/articleView/:id', // 跳转id可外键传入
           name: 'index.articleView', // 添加一个名称，例如 'view'
           component: () => import('../components/blog/articleView.vue')
-        }
+        },
+        {
+          path: '/write/:id?',
+          name: 'index.BlogWrite',
+          component: () => import('../components/blog/BlogWrite.vue')
+        },
+        {
+          path: '/tag/:id?',
+          name: 'index.BlogCategoryTag',
+          component: () => import('../components/blog/BlogCategoryTag.vue')
+        },
       ]
     },
     {
