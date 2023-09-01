@@ -52,11 +52,6 @@ const router = new Router({
           component: () => import('../components/setting.vue')
         },
         {
-          path: '/student',
-          name: 'index.student',
-          component: () => import('../components/student.vue')
-        },
-        {
           path: '/ArticleScrollPage',
           name: 'index.ArticleScrollPage',
           component: () => import('../components/ArticleScrollPage.vue')

@@ -6,7 +6,7 @@
           <bk-option id="tag" name="标签" @click="option_tag"></bk-option>
         </bk-select>
         <bk-input class="bk-input-custom"  style="width: 400px" size="large" v-model=textcontent
-                  v-if="value1 === 'tag'" key:1 placeholder="请搜索标签" :left-icon="'bk-icon icon-search'"></bk-input>
+                  v-if="value1 === 'tag'" key:1 placeholder="please search label information" :left-icon="'bk-icon icon-search'"></bk-input>
       <bk-button class="search-button" type="search" theme="warning" @click="search_data" size="large">search</bk-button>
      </bk-compose-form-item>
      <div style="float:right;" class="container">
@@ -36,6 +36,7 @@
       &nbsp;<bk-icon type="upload" />&nbsp;<bk-button theme="success" @click="load_excel()"> 数据导出</bk-button>
     </div>
     <bk-table style="margin-top: 15px;"
+              class="table-bk"
         :data="page_data"
         :size="size"
         :pagination="pagination"
@@ -315,13 +316,7 @@ export default {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.bk-select-custom .bk-select {
-  background-color: transparent;
-  border: none;
-  color: #ffffff;
-}
-
-.bk-input-custom .bk-input {
+.bk-input-custom {
   background-color: rgba(255, 255, 255, 0.2);
   border: none;
   color: #ffffff;
@@ -355,6 +350,10 @@ export default {
   align-items: flex-end;
 }
 
+.ml10 {
+  color: #78b6f7;
+}
+
 .style-button {
   background-image: linear-gradient(135deg, #3a3a3a, #1c1c1c);
   border: none;
@@ -367,15 +366,11 @@ export default {
   transform: scale(1.1);
 }
 
-/*.inner {*/
-/*  display: flex;*/
-/*  align-items: center;*/
-/*  justify-content: center;*/
-/*  background-image: linear-gradient(135deg, #3a3a3a, #1c1c1c);*/
-/*  padding: 20px;*/
-/*  border-radius: 10px;*/
-/*  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
-/*}*/
+.table-bk {
+  color: #0720c4;
+  font-weight: bold; /*加粗*/
+}
+
 
 .add-button {
   margin-left: 15px;
@@ -390,22 +385,6 @@ export default {
   transform: scale(1.1);
 }
 
-
-.demo-custom {
-    font-size: 14px;
-    line-height: 24px;
-    color: #63656e;
-    padding-bottom: 10px;
-}
-.content-icon {
-    color: #ea3636;
-    position: absolute;
-    top: 20px;
-}
-.content-text {
-    display: inline-block;
-    margin-left: 20px;
-}
 
 .dot-menu {
     display: inline-block;
@@ -434,12 +413,6 @@ export default {
     border-radius: 50%;
     background-color: currentColor;
     box-shadow: 0 -4px 0 currentColor, 0 4px 0 currentColor;
-}
-.dot-menu-list {
-    margin: 0;
-    padding: 5px 0;
-    min-width: 50px;
-    list-style: none;
 }
 .dot-menu-list .dot-menu-item {
     padding: 0 10px;

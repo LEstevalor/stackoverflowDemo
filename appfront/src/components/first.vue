@@ -1,5 +1,5 @@
 <template>
-  <div v-title data-title="科技文海">
+  <div class="page-container">
     <bk-container class="custom-container">
       <div class="flex-container">
         <bk-aside class="custom-aside">
@@ -107,6 +107,14 @@ export default {
 </script>
 
 <style scoped>
+/*背景*/
+.page-container {
+  background-image: url("../assets/star4.gif");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
 .custom-container {
   font-family: "Roboto", sans-serif; /* 使用现代化字体 */
 }

@@ -177,19 +177,19 @@ export default {
             // ]
           },
           {
-            name: 'Top问题',
+            name: '主页',
+            icon: 'icon-clock-shape',
+            url: '/datasource/'
+          },
+          {
+            name: '问题吧',
             icon: 'icon-apps-shape',
             url: '/dashboard/'
           },
           {
-            name: '标签',
+            name: '标签吧',
             icon: 'icon-tree-process-shape',
             url: '/uptime_check/summary/'
-          },
-          {
-            name: '全页',
-            icon: 'icon-clock-shape',
-            url: '/datasource/'
           },
           {
             name: '文章',
@@ -205,19 +205,6 @@ export default {
             name: '专业',
             icon: 'icon-tree-module-shape',
             url: '/component/'
-          },
-          {
-            name: '学生信息',
-            icon: 'icon-qq-shape',
-            url: '/operation_monitor/'
-            // children: [
-            //   {
-            //     name: '学生信息'
-            //   },
-            //   {
-            //     name: '课程信息'
-            //   }
-            // ]
           },
           {
             name: '主页面',
@@ -391,17 +378,15 @@ export default {
         this.$router.push('/college')
       } else if (obj === '专业' || obj === '专业信息') {
         this.$router.push('/major')
-      } else if (obj === '学生信息') {
-        this.$router.push('/student')
       } else if (obj === '文章') {
         this.$router.push('/ArticleScrollPage')
-      } else if (obj === '标签') {
+      } else if (obj === '标签吧') {
         this.$router.push('/tag')
-      } else if (obj === '全页') {
+      } else if (obj === '主页') {
         this.$router.push('/first')
       } else if (obj === '主页面') {
         this.$router.push('/BaseHeader')
-      } else if (obj === 'Top问题') {
+      } else if (obj === '问题吧') {
         this.$router.push('/top_question')
       } else if (obj === '设置') {
         this.$router.push('/setting')

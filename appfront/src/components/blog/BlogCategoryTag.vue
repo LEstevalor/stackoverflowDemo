@@ -4,7 +4,7 @@
       <bk-main>
         <div class="me-ct-title me-area">
           <img class="me-ct-picture" :src="defaultAvatar"/>
-          <h3 class="me-ct-name">标签：{{ ct.tag }}</h3>
+          <h2 class="me-ct-name">标签：{{ ct.tag }}</h2>
         </div>
         <h3 class="me-ct-meta">{{ ct.count }} 文章</h3>
         <div class="me-ct-articles">
@@ -86,6 +86,12 @@ export default {
 </script>
 
 <style>
+.me-ct-body {
+  background-image: url("../../assets/star5.gif");
+  /*background-repeat: no-repeat;*/
+  /*background-size: cover;*/
+  background-position: center center;
+}
 
 .me-ct-title {
   text-align: center;
@@ -100,6 +106,7 @@ export default {
 
 .me-ct-name {
   font-size: 28px;
+  color: #6e86e4;
 }
 
 .me-ct-meta {
