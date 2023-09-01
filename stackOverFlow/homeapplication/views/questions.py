@@ -14,7 +14,7 @@ from stackOverFlow.homeapplication.models import Question, TagsQuestion, User, Q
 from stackOverFlow.homeapplication.serializers.questions import (
     QuestionSerializer, QuestionCreateSerializer, QuestionUpdateSerializer, TagsListSerializer,
     QuestionsByTagSerializer, TagsHotListSerializer, TagsSerializer, QuestionUserSerializer,
-    QuestionUserStatusSerializer,
+    QuestionUserStatusSerializer, TagsHotSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -145,6 +145,20 @@ class QuestionViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         tags=["问题 Question"],
+        operation_summary="单个标签信息"
+    )
+    @action(detail=True, methods=["GET"])
+    def get_single_tag(self, request, pk):
+        tag = get_object_or_404(TagsQuestion, pk=pk)
+        try:
+            tag_info = TagsQuestion.objects.find_single(tag=tag)
+        except Exception:
+            logger.exception("列出标签失败")
+            raise error_codes.TAG_LIST_FAILED
+        return Response(TagsHotSerializer(tag_info).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["问题 Question"],
         operation_summary="列出标签加贴数"
     )
     @action(detail=False, methods=["GET"])
@@ -173,10 +187,11 @@ class QuestionViewSet(GenericViewSet):
         tags=["问题 Question"],
         operation_summary="标签获取问题"
     )
-    @action(detail=True, methods=["POST"])
+    @action(detail=True, methods=["GET"])
     def get_question_by_tag(self, request, pk):
+        tag = get_object_or_404(TagsQuestion, pk=pk)
         try:
-            questions = Question.objects.filter(tag=self.get_object().tag)
+            questions = Question.objects.filter(tag=tag.tag)
         except Exception:
             logger.exception("标签获取问题失败")
             raise error_codes.TAG_QUESTION_LIST_FAILED

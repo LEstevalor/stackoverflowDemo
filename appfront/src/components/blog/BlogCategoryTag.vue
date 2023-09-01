@@ -1,26 +1,15 @@
 <template>
-  <div class="me-ct-body" v-title :data-title="title">
+  <div class="me-ct-body" :title="title">
     <bk-container class="me-ct-container">
       <bk-main>
         <div class="me-ct-title me-area">
-          <template v-if="this.$route.params.type === 'tag'">
-            <img class="me-ct-picture" :src="defaultAvatar"/>
-            <h3 class="me-ct-name">{{ ct.tag }}</h3>
-          </template>
-
-          <template v-else>
-            <img class="me-ct-picture" :src="defaultAvatar"/>
-            <h3 class="me-ct-name">{{ ct.tag }}</h3>
-            <p>{{ ct.description }}</p>
-          </template>
-
-          <span class="me-ct-meta">{{ ct.tag }} 文章</span>
+          <img class="me-ct-picture" :src="defaultAvatar"/>
+          <h3 class="me-ct-name">标签：{{ ct.tag }}</h3>
         </div>
-
+        <h3 class="me-ct-meta">{{ ct.count }} 文章</h3>
         <div class="me-ct-articles">
           <article-scroll-page v-bind="article"></article-scroll-page>
         </div>
-
       </bk-main>
     </bk-container>
   </div>
@@ -29,10 +18,9 @@
 <script>
 import {bkMain, bkContainer} from 'bk-magic-vue'
 import ArticleScrollPage from '../ArticleScrollPage'
-// import {getArticlesByCategory, getArticlesByTag} from '@/api/article'
-// import {getTagDetail} from '@/api/tag'
-// import {getCategoryDetail} from '@/api/category'
 import defaultAvatar from '../../assets/book.png'
+import axios from "axios"
+import {host} from "../../../static/js/host";
 
 
 export default {
@@ -47,75 +35,46 @@ export default {
     '$route': 'getCategoryOrTagAndArticles'
   },
   data() {
+    this.token = localStorage.token || sessionStorage.token
     return {
       defaultAvatar: defaultAvatar,
       ct: {},
       article: {
-        query: {
-          tagId: '',
-          categoryId: ''
+        query1: {
+          tag_id: "",
         }
       },
     }
   },
   computed: {
     title() {
-      if (this.$route.params.type === 'tag') {
-        return `${this.ct.tagName} - 标签 - 码神之路`
-      }
-      return `${this.ct.categoryName} - 文章分类 - 码神之路`
+      return `${this.ct.tag} - 标签 - GDUT`
     }
   },
   methods: {
     getCategoryOrTagAndArticles() {
       let id = this.$route.params.id
-      let type = this.$route.params.type
-      if ('tag' === type) {
-        this.getTagDetail(id)
-        this.article.query.tagId = id
-      } else {
-        this.getCategoryDetail(id)
-        this.article.query.categoryId = id
-      }
-
-    },
-    getCategoryDetail(id) {
-      let that = this
-      getCategoryDetail(id).then(data => {
-        that.ct = data.data
-      }).catch(error => {
-        if (error !== 'error') {
-          that.$message({type: 'error', message: '文章分类加载失败', showClose: true})
-        }
-      })
+      this.article.query1.tag_id = id
+      // let type = this.$route.params.type  // 路由为 :type/:id可用（丰富类型）
+      // if ('tag' === type) {
+      //   this.getTagDetail(id)
+      //   this.article.query.tagId = id
+      // }
+      this.getTagDetail(id)
     },
     getTagDetail(id) {
       let that = this
-      getTagDetail(id).then(data => {
+      axios.get(host + `/api/v1/questions/${id}/get_single_tag/`, { // 获取data列表中的数据
+        headers: {
+          'Authorization': 'Bearer ' + this.token
+        },
+        responseType: 'json'
+      }).then(data => {
         that.ct = data.data
+        console.info(data.data.count)
       }).catch(error => {
         if (error !== 'error') {
           that.$message({type: 'error', message: '标签加载失败', showClose: true})
-        }
-      })
-    },
-    getArticlesByCategory(id) {
-      let that = this
-      getArticlesByCategory(id).then(data => {
-        that.articles = data.data
-      }).catch(error => {
-        if (error !== 'error') {
-          that.$message({type: 'error', message: '文章加载失败', showClose: true})
-        }
-      })
-    },
-    getArticlesByTag(id) {
-      let that = this
-      getArticlesByTag(id).then(data => {
-        that.articles = data.data
-      }).catch(error => {
-        if (error !== 'error') {
-          that.$message({type: 'error', message: '文章加载失败', showClose: true})
         }
       })
     }
@@ -127,10 +86,6 @@ export default {
 </script>
 
 <style>
-
-.bk-main {
-  padding: 0;
-}
 
 .me-ct-title {
   text-align: center;
@@ -149,7 +104,7 @@ export default {
 
 .me-ct-meta {
   font-size: 12px;
-  color: #969696;
+  color: #b25e5e;
 }
 
 .me-ct-articles {

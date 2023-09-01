@@ -59,6 +59,9 @@ export default {
   components: {
     bkTable, bkTableColumn, bkButton, bkInput
   },
+  created() {
+    this.searchQuestions()
+  },
   data() {
     this.token = localStorage.token || sessionStorage.token
     return {

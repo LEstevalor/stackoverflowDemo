@@ -7,8 +7,8 @@
 <script>
 import ArticleItem from '../components/scrollpage/ArticleItem'
 import ScrollPage from '../components/scrollpage'
-import axios from "axios";
-import {host} from "../../static/js/host";
+import axios from "axios"
+import {host} from "../../static/js/host"
 
 export default {
   name: "ArticleScrollPage",
@@ -28,9 +28,25 @@ export default {
       default() {
         return {}
       }
+    },
+    query1: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   watch: {
+    'query1': {
+      handler() {
+        console.log("来了宝贝")
+        this.innerPage.pageNumber = 1
+        this.articles = []
+        this.noData = false
+        this.getArticles()
+      },
+      deep: true
+    },
     'query': {
       handler() {
         this.noData = false
@@ -75,9 +91,14 @@ export default {
       this.$router.push({path: `/view/${id}`})
     },
     getArticles() {
+      let path = '/api/v1/questions/'
+      console.log(this.query1.tag_id)
+      if (this.query1.tag_id)
+        path = `/api/v1/questions/${this.query1.tag_id}/get_question_by_tag/`
+
       this.loading = true
       // getArticles(this.query, this.innerPage)
-      axios.get(host + '/api/v1/questions/', { // 获取data列表中的数据
+      axios.get(host + path, { // 获取data列表中的数据
         headers: {
           'Authorization': 'Bearer ' + this.token
         },

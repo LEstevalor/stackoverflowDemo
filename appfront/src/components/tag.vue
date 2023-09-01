@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page-container">
     <bk-container class="me-allct-container">
       <bk-main>
         <div>
@@ -29,7 +29,7 @@
                   </a>
 
                   <div class="me-allct-meta">
-                    <span>{{ t.tag }}  文章</span>
+                    <span>{{ t.tag }}  类文章</span>
                   </div>
                 </div>
               </li>
@@ -110,8 +110,12 @@ export default {
 </script>
 
 <style>
-.me-allct-body {
-  margin: 60px auto 140px;
+/*背景*/
+.page-container {
+  background-image: url("../assets/star5.gif");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
 }
 
 .me-allct-container {
@@ -131,25 +135,24 @@ export default {
 }
 
 .me-allct-content {
-  display: inline-block;
-  width: 100%;
-  background-color: #fff;
-  border: 1px solid #f1f1f1;
-  transition: border-color .3s;
-  text-align: center;
-  padding: 1.5rem 0;
+    display: inline-block;
+    width: 100%;
+    background-image: linear-gradient(to right, rgba(30, 213, 169, 0.8), rgba(1, 163, 164, 0.8)); /* 蓝绿色和深蓝色渐变背景 */
+    border: none;
+    transition: background-color .3s;
+    text-align: center;
+    padding: 1.5rem 0;
+    font-family: 'Roboto', sans-serif;
+    color: #ffffff;
 }
+
+.me-allct-content:hover {
+    background-image: linear-gradient(to right, rgba(76, 209, 55, 1), rgba(72, 126, 176, 1)); /* 鼠标悬停时增加渐变背景的不透明度 */
+}
+
 
 .me-allct-info {
   cursor: pointer;
-}
-
-.me-allct-img {
-  margin: -40px 0 10px;
-  width: 60px;
-  height: 60px;
-  vertical-align: middle;
-
 }
 
 .me-allct-name {
@@ -161,21 +164,9 @@ export default {
   margin-top: 4px;
 }
 
-.me-allct-description {
-  min-height: 50px;
-  font-size: 13px;
-  line-height: 25px;
-}
-
 .me-allct-meta {
   font-size: 12px;
-  color: #969696;
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 25px;
+  color: #4359a1;
 }
 
 .tab-button {

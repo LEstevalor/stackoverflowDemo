@@ -271,7 +271,7 @@ export default {
         id: '首页',
         toggle: false,
         submenuActive: false,
-        title: '教务平台'
+        title: 'GDUT 科技博客'
       },
       header: {
         selectList: [

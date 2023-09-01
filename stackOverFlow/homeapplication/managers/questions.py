@@ -142,3 +142,9 @@ class TagsQuestionManager(models.Manager):
         if not data:
             return self.all()
         return self.filter(tag__icontains=data)
+
+    def find_single(self, tag):
+        """搜索单tag"""
+        from stackOverFlow.homeapplication.models import Question
+        tag.count = Question.objects.filter(tag=tag.tag).count()
+        return tag
