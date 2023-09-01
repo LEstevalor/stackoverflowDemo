@@ -403,6 +403,8 @@ export default {
         this.$router.push('/BaseHeader')
       } else if (obj === 'Top问题') {
         this.$router.push('/top_question')
+      } else if (obj === '设置') {
+        this.$router.push('/setting')
       }
     },
     login_out() {

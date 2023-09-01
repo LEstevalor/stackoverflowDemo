@@ -145,6 +145,19 @@ class QuestionViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         tags=["问题 Question"],
+        operation_summary="列出标签加贴数"
+    )
+    @action(detail=False, methods=["GET"])
+    def list_tag_and_count(self, request, *args, **kwargs):
+        try:
+            tags_question = TagsQuestion.objects.list_tag_and_count(tag=request.GET.get("tag"))
+        except Exception:
+            logger.exception("列出标签失败")
+            raise error_codes.TAG_LIST_FAILED
+        return Response(TagsHotListSerializer({"results": tags_question}).data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        tags=["问题 Question"],
         operation_summary="获取问题最多的五个标签"
     )
     @action(detail=False, methods=["GET"])

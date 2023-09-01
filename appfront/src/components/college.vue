@@ -1,28 +1,29 @@
 <template>
-  <div>
+  <div class="page-container" >
      <bk-compose-form-item class="select-demo">
        <div>&nbsp;</div>
-        <bk-select v-model="value1" style="width: 140px" size="large" :clearable="false">
+        <bk-select class="bk-select-custom" v-model="value1" style="width: 140px" size="large" :clearable="false">
           <bk-option id="tag" name="标签" @click="option_tag"></bk-option>
         </bk-select>
-        <bk-input style="width: 400px" size="large" v-model=textcontent v-if="value1 === 'tag'" key:1 placeholder="请搜索标签" :left-icon="'bk-icon icon-search'"></bk-input>
-      <bk-button type="search" theme="warning" @click="search_data" size="large">search</bk-button>
+        <bk-input class="bk-input-custom"  style="width: 400px" size="large" v-model=textcontent
+                  v-if="value1 === 'tag'" key:1 placeholder="请搜索标签" :left-icon="'bk-icon icon-search'"></bk-input>
+      <bk-button class="search-button" type="search" theme="warning" @click="search_data" size="large">search</bk-button>
      </bk-compose-form-item>
      <div style="float:right;" class="container">
       <div>&nbsp;</div>
-      <bk-button theme="primary" @click="toggleTableSize">样式设置</bk-button>
+      <bk-button class="style-button" theme="primary" @click="toggleTableSize">样式设置</bk-button>
       <span class="ml10">当前尺寸：{{ size }} &nbsp;&nbsp;&nbsp;</span>
       <div>&nbsp;</div>
       <!-- 添加标签 -->
       <div class="inner">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <bk-popconfirm trigger="click" :ext-cls="'asadsadsads'" width="288" @confirm="addData()">
+        <bk-popconfirm class="popconfirm"trigger="click" :ext-cls="'asadsadsads'" width="288" @confirm="addData()">
           <div slot="content">
               <bk-compose-form-item>
                 <h3>标签: <bk-input v-model="create_tag" type='text'/></h3>
               </bk-compose-form-item>
           </div>
-          <bk-button theme="primary" :disabled="status === 'USER'">添加</bk-button>
+          <bk-button class="add-button" theme="primary" :disabled="status === 'USER'">添加</bk-button>
         </bk-popconfirm>
       </div>
       &nbsp;
@@ -117,7 +118,7 @@ export default {
   },
   methods: {
     getData () {
-      axios.get(host + '/api/v1/questions/list_hot_tag/', { // 获取data列表中的数据
+      axios.get(host + '/api/v1/questions/list_tag_and_count/', { // 获取data列表中的数据
         headers: {
           'Authorization': 'Bearer ' + this.token
         },
@@ -184,7 +185,7 @@ export default {
           alert('操作客户端变量被篡改的风险，请刷新页面')
         }
 
-        axios.get(host + '/api/v1/questions/list_hot_tag/', { // 获取data列表中的数据
+        axios.get(host + '/api/v1/questions/list_tag_and_count/', { // 获取data列表中的数据
           headers: {
             'Authorization': 'Bearer ' + this.token
           },
@@ -294,6 +295,102 @@ export default {
 </script>
 
 <style>
+/*动态背景*/
+.page-container {
+  background-image: url("../assets/star2.gif");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+
+/*首栏优化*/
+.select-demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(135deg, #3a3a3a, #1c1c1c);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bk-select-custom .bk-select {
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+}
+
+.bk-input-custom .bk-input {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #ffffff;
+}
+
+.bk-input-custom .bk-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.bk-input-custom .bk-icon {
+  color: #ffffff;
+}
+
+.search-button {
+  margin-left: 15px;
+  background-image: linear-gradient(135deg, #9c27b0, #f50057);
+  color: #ffffff;
+  border: none;
+  transition: background-image 0.3s, transform 0.3s;
+}
+
+.search-button:hover {
+  background-image: linear-gradient(135deg, #f50057, #9c27b0);
+  transform: scale(1.1);
+}
+
+/*中栏优化*/
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.style-button {
+  background-image: linear-gradient(135deg, #3a3a3a, #1c1c1c);
+  border: none;
+  color: #ffffff;
+  transition: background-image 0.3s, transform 0.3s;
+}
+
+.style-button:hover {
+  background-image: linear-gradient(135deg, #1c1c1c, #3a3a3a);
+  transform: scale(1.1);
+}
+
+/*.inner {*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  background-image: linear-gradient(135deg, #3a3a3a, #1c1c1c);*/
+/*  padding: 20px;*/
+/*  border-radius: 10px;*/
+/*  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+.add-button {
+  margin-left: 15px;
+  background-image: linear-gradient(135deg, #9c27b0, #f50057);
+  color: #ffffff;
+  border: none;
+  transition: background-image 0.3s, transform 0.3s;
+}
+
+.add-button:hover {
+  background-image: linear-gradient(135deg, #f50057, #9c27b0);
+  transform: scale(1.1);
+}
+
+
 .demo-custom {
     font-size: 14px;
     line-height: 24px;
@@ -353,5 +450,26 @@ export default {
 .dot-menu-list .dot-menu-item:hover {
     background-color: #eaf3ff;
     color: #3a84ff;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popconfirm {
+  animation: fadeIn 0.4s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

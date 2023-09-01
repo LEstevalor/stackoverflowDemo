@@ -74,9 +74,9 @@ class QuestionManager(models.Manager):
     def vote_back(self, request, question):
         """赞问题贴"""
         from stackOverFlow.homeapplication.models import QuestionUser
-        back_user = QuestionUser.objects.filter(username=request.user.username, back_question_id=question.id)
+        back_user = QuestionUser.objects.filter(username=request.user.username, back_question_id=question.id).first()
         # 已经是点赞状态则返回ZERO状态
-        if back_user.values_list("status", flat=True) == BackUserStatus.UPVOTE.value:
+        if back_user.status == BackUserStatus.UPVOTE.value:
             back_user.status = BackUserStatus.ZERO.value
             back_user.save()
             question.upvotes -= 1
@@ -90,9 +90,9 @@ class QuestionManager(models.Manager):
     def down_vote_back(self, request, question):
         """否赞问题贴"""
         from stackOverFlow.homeapplication.models import QuestionUser
-        back_user = QuestionUser.objects.filter(username=request.user.username, back_question_id=question.id)
+        back_user = QuestionUser.objects.filter(username=request.user.username, back_question_id=question.id).first()
         # 已经是点赞状态则返回ZERO状态
-        if back_user.values_list("status", flat=True) == BackUserStatus.DOWNVOTE.value:
+        if back_user.status == BackUserStatus.DOWNVOTE.value:
             back_user.status = BackUserStatus.ZERO.value
             back_user.save()
             question.downvotes -= 1
@@ -112,7 +112,7 @@ class TagsQuestionManager(models.Manager):
 
         tag_counts = []
         for tag in tag_list:
-            tag.count = Question.objects.filter(tag__icontains=tag.tag).count()
+            tag.count = Question.objects.filter(tag=tag.tag).count()
             tag_counts.append(tag)
 
         num = request.GET.get("num")
@@ -125,6 +125,17 @@ class TagsQuestionManager(models.Manager):
         else:
             top_five_tags = tag_counts
         return top_five_tags
+
+    def list_tag_and_count(self, tag):
+        """列出标签加贴数"""
+        from stackOverFlow.homeapplication.models import Question
+        if tag:
+            tag_list = self.filter(Q(tag__icontains=tag))
+        else:
+            tag_list = self.all()
+        for tag in tag_list:
+            tag.count = Question.objects.filter(tag=tag.tag).count()
+        return tag_list
 
     def find_all(self, data):
         """全局搜索tag或模糊搜索tag"""

@@ -47,6 +47,11 @@ const router = new Router({
           component: () => import('../components/major.vue')
         },
         {
+          path: '/setting',
+          name: 'index.setting',
+          component: () => import('../components/setting.vue')
+        },
+        {
           path: '/student',
           name: 'index.student',
           component: () => import('../components/student.vue')
@@ -77,10 +82,20 @@ const router = new Router({
   ]
 });
 
+function isTokenExpired(token) {
+  // 判断token是否过期
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return Date.now() >= payload.exp * 1000;
+  } catch (error) {
+    return true;
+  }
+}
+
 router.beforeEach((to, from, next) => {
   // 检查用户是否已登录
   const token = localStorage.getItem('token');
-  const isLoggedIn = !!token;
+  const isLoggedIn = !!token && !isTokenExpired(token);
   // 如果用户未登录且试图访问非登录页面，则重定向到登录页面
   if (!isLoggedIn && to.path !== '/login') {
     next('/login');

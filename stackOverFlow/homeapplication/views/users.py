@@ -38,6 +38,7 @@ class RegisterUserView(CreateAPIView):
 class UniqueView(APIView):
     """唯一注册视图"""
     def get(self, request):
+        """注册"""
         str = request.GET.get("str")
         front_str = request.GET.get(str)
         if str == "username":  # 检查是否有重复的账号
@@ -47,6 +48,26 @@ class UniqueView(APIView):
             # SQL: select count(*) from user where email = front_str
             count = User.objects.filter(email=front_str).count()
         return Response({"count": count})
+
+    def post(self, request):
+        """重置密码"""
+        username = request.data["username"]
+        password = request.data["password"]
+        email = request.data["email"]
+        user = User.objects.filter(username=username, password=password, email=email).first()
+        if not user:
+            return Response({"message": "原密码不对"}, status=status.HTTP_400_BAD_REQUEST)
+
+        password2 = request.data["password2"]
+        password22 = request.data["password22"]
+        if password2 != password22 or len(password2) < 6:
+            return Response({"新密码重输不一致或密码小于6位"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user.password = password2
+            user.save()
+        except Exception:
+            return Response({"重置密码失败"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)
 
 
 class RealNameView(APIView):
