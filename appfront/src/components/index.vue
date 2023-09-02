@@ -202,11 +202,6 @@ export default {
             url: '/bp/'
           },
           {
-            name: '专业',
-            icon: 'icon-tree-module-shape',
-            url: '/component/'
-          },
-          {
             name: '主页面',
             icon: 'icon-empty-shape',
             url: '/biz_manage/',
@@ -376,8 +371,6 @@ export default {
         this.$router.push('/top')
       } else if (obj === '标签列表') {
         this.$router.push('/college')
-      } else if (obj === '专业' || obj === '专业信息') {
-        this.$router.push('/major')
       } else if (obj === '文章') {
         this.$router.push('/ArticleScrollPage')
       } else if (obj === '标签吧') {

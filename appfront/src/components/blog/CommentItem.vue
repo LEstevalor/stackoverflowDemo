@@ -2,13 +2,13 @@
   <div class="me-view-comment-item">
     <div class="me-view-comment-author">
       <a class="">
-        <img class="me-view-picture" :src="comment.username.avatar"></img>
+        <img class="me-view-picture" :src="this.avatar"></img>
       </a>
       <div class="me-view-info">
         <span class="me-view-nickname">{{ comment.username }}</span>
         <div class="me-view-meta">
           <span>{{ rootCommentCounts - index }}楼</span>
-          <span>{{ comment.createDate | format }}</span>
+          <span>{{ comment.create_time }}</span>
         </div>
       </div>
     </div>
@@ -18,7 +18,7 @@
         <!--<a class="me-view-comment-tool">-->
         <!--<i class="el-icon-caret-top"></i> 20-->
         <!--</a>-->
-        <a class="me-view-comment-tool" @click="showComment(-1,comment.author)">
+        <a class="me-view-comment-tool" @click="showComment(-1,comment.username)">
           <i class="me-icon-comment"></i>&nbsp; 评论
         </a>
       </div>
@@ -33,16 +33,13 @@
             <span>{{ c.content }}</span>
           </div>
           <div class="me-view-meta">
-            <span style="padding-right: 10px">{{ c.createDate | format }}</span>
-            <!--  <a class="me-view-comment-tool" @click="showComment(c.id, c.author)">
-                <i class="me-icon-comment"></i>&nbsp;回复
-              </a> -->
+            <span style="padding-right: 10px">{{ c.create_time }}</span>
+            <a class="me-view-comment-tool" @click="showComment(c.id, c.username)">
+              <i class="me-icon-comment"></i>&nbsp;回复
+            </a>
           </div>
-
         </div>
-
         <div class="me-view-comment-write" v-show="commentShow">
-
           <bk-input
             v-model="reply.content"
             type="input"
@@ -51,11 +48,8 @@
             class="me-view-comment-text"
             resize="none">
           </bk-input>
-
           <bk-button style="margin-left: 8px" @click="publishComment()" type="text">评论</bk-button>
-
         </div>
-
       </div>
 
     </div>
@@ -64,6 +58,7 @@
 
 <script>
 import {bkButton, bkInput} from 'bk-magic-vue'
+import defaultAvatar from '../../assets/book.png'
 // import {publishComment} from '@/api/comment'
 
 export default {
@@ -78,6 +73,7 @@ export default {
     rootCommentCounts: Number
   },
   data() {
+    this.avater = defaultAvatar
     return {
       placeholder: '你的评论...',
       commentShow: false,
@@ -85,14 +81,17 @@ export default {
       reply: this.getEmptyReply()
     }
   },
+  created() {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+  },
   methods: {
-    showComment(commentShowIndex, toUser) {
+    showComment(commentShowIndex, username) {
       this.reply = this.getEmptyReply()
 
       if (this.commentShowIndex !== commentShowIndex) {
-        if (toUser) {
-          this.placeholder = `@${toUser.nickname} `
-          this.reply.toUserId = toUser.id
+        if (username) {
+          this.placeholder = `@${username} `
+          this.reply.toUserId = username
         } else {
           this.placeholder = '你的评论...'
         }
@@ -105,29 +104,28 @@ export default {
       }
     },
     publishComment() {
-      let that = this
-      if (!that.reply.content) {
-        return;
-      }
-
-      publishComment(that.reply, this.$store.state.token).then(data => {
-        if (data.success) {
-          that.$message({type: 'success', message: '评论成功', showClose: true})
-          if (!that.comment.childrens) {
-            that.comment.childrens = []
-          }
-          that.comment.childrens.unshift(data.data)
-          that.$emit('commentCountsIncrement')
-          that.showComment(that.commentShowIndex)
-        } else {
-          that.$message({type: 'error', message: data.msg, showClose: true})
-        }
-      }).catch(error => {
-        if (error !== 'error') {
-          that.$message({type: 'error', message: '评论失败', showClose: true})
-        }
-      })
-
+      // let that = this
+      // if (!that.reply.content) {
+      //   return;
+      // }
+      //
+      // publishComment(that.reply, this.$store.state.token).then(data => {
+      //   if (data.success) {
+      //     that.$message({type: 'success', message: '评论成功', showClose: true})
+      //     if (!that.comment.childrens) {
+      //       that.comment.childrens = []
+      //     }
+      //     that.comment.childrens.unshift(data.data)
+      //     that.$emit('commentCountsIncrement')
+      //     that.showComment(that.commentShowIndex)
+      //   } else {
+      //     that.$message({type: 'error', message: data.msg, showClose: true})
+      //   }
+      // }).catch(error => {
+      //   if (error !== 'error') {
+      //     that.$message({type: 'error', message: '评论失败', showClose: true})
+      //   }
+      // })
     },
     getEmptyReply() {
       return {

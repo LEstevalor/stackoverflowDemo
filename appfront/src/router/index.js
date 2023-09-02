@@ -42,11 +42,6 @@ const router = new Router({
           component: () => import('../components/college.vue')
         },
         {
-          path: '/major',
-          name: 'index.major',
-          component: () => import('../components/major.vue')
-        },
-        {
           path: '/setting',
           name: 'index.setting',
           component: () => import('../components/setting.vue')

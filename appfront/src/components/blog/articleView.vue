@@ -87,7 +87,7 @@
           </div>
 
           <div class="me-view-comment-title">
-            <span>{{ article.commentCounts || 0 }} 条回帖</span>
+            <span>{{ this.article.commentCounts }} 条回帖</span>
           </div>
 
           <commmentz-item
@@ -96,8 +96,8 @@
             :articleId="article.id"
             :index="index"
             :rootCommentCounts="comments.length"
-            @commentCountsIncrement="commentCountsIncrement"
             :key="c.id">
+            <!--            @commentCountsIncrement="commentCountsIncrement"-->
           </commmentz-item>
 
         </div>
@@ -143,6 +143,7 @@ export default {
         tag_id: 0,
         category: {},
         createDate: '',
+        commentCounts: 0,
         editor: {
           value: '',
           toolbarsFlag: false,
@@ -206,17 +207,15 @@ export default {
         responseType: 'json',
         withCredentials: true // 跨域情况可以携带cookie
       }).then(data => {
-        that.$message({type: 'success', message: '评论成功', showClose: true})
         that.comment.content = ''
-        that.comments.unshift(data.data)
+        that.comments = data.data.results
         that.commentCountsIncrement()
       }).catch(error => {
-        if (error !== 'error') {
-          that.$message({type: 'error', message: '评论失败', showClose: true})
-        }
+        this.errorInfoBox("评论失败")
       })
     },
     commentCountsIncrement() {
+      console.log("1234568888988978946846")
       this.article.commentCounts += 1
     },
     getCommentsByArticle() {
@@ -226,16 +225,15 @@ export default {
         withCredentials: true // 跨域情况可以携带cookie
       }).then(data => {
         that.comments = data.data.results
+        that.article.commentCounts = data.data.results.length
       }).catch(error => {
-        if (error !== 'error') {
-          that.$message({type: 'error', message: '回帖加载失败', showClose: true})
-        }
+        this.errorInfoBox("回帖加载失败")
       })
     }
   },
   components: {
-    'markdown-editor': MarkdownEditor,
-    CommmentItem
+    CommmentItem,
+    'markdown-editor': MarkdownEditor
   },
   //组件内的守卫 调整body的背景色
   beforeRouteEnter(to, from, next) {
@@ -245,6 +243,44 @@ export default {
   beforeRouteLeave(to, from, next) {
     window.document.body.style.backgroundColor = '#f5f5f5';
     next();
+  },
+  errorInfoBox(msg) {
+    const a = this.$bkInfo({
+      type: 'error',
+      title: 'Fail:' + msg,
+      subTitle: '窗口2秒后关闭',
+      showFooter: false
+    })
+    let num = 2
+    let t = setInterval(() => {
+      a.subTitle = `此窗口${--num}秒后关闭`
+      if (num === 0) {
+        clearInterval(t)
+        a.close()
+      }
+    }, 1000)
+  },
+  successInfoBox(msg) {
+    const h = this.$createElement
+    const a = this.$bkInfo({
+      type: 'success',
+      title: msg,
+      showFooter: false,
+      subHeader: h('a', {
+        style: {
+          color: '#3a84ff',
+          textDecoration: 'none',
+          cursor: 'pointer'
+        }
+      })
+    })
+    let num = 1
+    let t = setInterval(() => {
+      if (--num === 0) {
+        clearInterval(t)
+        a.close()
+      }
+    }, 1000)
   }
 }
 </script>
@@ -256,7 +292,7 @@ export default {
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
-  line-height: 1.6;
+  line-height: 1;
   color: #333;
 }
 
