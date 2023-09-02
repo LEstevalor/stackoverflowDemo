@@ -10,21 +10,33 @@
           <div class="me-view-info">
             <span>{{ article.username }}</span>
             <div class="me-view-meta">
-              <span>{{ formatDate(article.create_time) }}</span>
               <span>赞同   {{ article.upvotes }}</span>
               <span>不赞同   {{ article.downvotes }}</span>
             </div>
 
           </div>
           <bk-button
+            v-if="this.article.username == this.username"
             @click="editArticle()"
             style="position: absolute;left: 60%;"
             round
-            icon="bk-icon-edit">编辑
+            icon="bk-icon-edit"> 编辑
           </bk-button>
         </div>
         <div class="me-view-content">
-          <markdown-editor :editor=article.editor></markdown-editor>
+          <div class="article-container">
+            <div class="author-info">
+              作者：{{ article.username }} | 发布时间：{{ formatDate(article.create_time) }}
+            </div>
+
+            <div v-if="this.article.username == this.username">
+              <markdown-editor :editor=article.editor></markdown-editor>
+            </div>
+            <div v-else class="content-container">
+              <!-- 内容显示给非文章作者 -->
+              <div v-html="article.content"></div>
+            </div>
+          </div>
         </div>
 
         <div class="me-view-end">
@@ -42,7 +54,7 @@
           <!--            <bk-button @click="tagOrCategory('tag', t.id)" size="mini" type="primary" v-for="t in article.tags"-->
           <!--                       :key="t.id" round plain>{{ t.tag }}-->
           <!--            </bk-button>-->
-          <bk-button @click="tagOrCategory('tag', article.id)" type="primary">
+          <bk-button @click="tagOrCategory('tag', article.tag_id)" type="primary">
             {{ article.tag }}
           </bk-button>
         </div>
@@ -69,16 +81,16 @@
 
             <bk-row :gutter="20">
               <bk-col :span="2" :offset="22">
-                <bk-button type="text" @click="publishComment()">评论</bk-button>
+                <bk-button type="text" @click="publishComment()">回帖</bk-button>
               </bk-col>
             </bk-row>
           </div>
 
           <div class="me-view-comment-title">
-            <span>{{ article.commentCounts }} 条评论</span>
+            <span>{{ article.commentCounts || 0 }} 条回帖</span>
           </div>
 
-          <commment-item
+          <commmentz-item
             v-for="(c,index) in comments"
             :comment="c"
             :articleId="article.id"
@@ -86,7 +98,7 @@
             :rootCommentCounts="comments.length"
             @commentCountsIncrement="commentCountsIncrement"
             :key="c.id">
-          </commment-item>
+          </commmentz-item>
 
         </div>
 
@@ -101,8 +113,6 @@ import {bkContainer, bkMain, bkButton, bkCol, bkRow, bkInput, bkAside} from 'bk-
 import MarkdownEditor from './MarkdownEditor'
 import CommmentItem from './CommentItem'
 import {formatDate} from '../../api/time'
-// import {viewArticle} from '@/api/article'
-// import {getCommentsByArticle, publishComment} from '@/api/comment'
 import default_avatar from '../../assets/user.png'
 import axios from "axios";
 import {host} from "../../../static/js/host";
@@ -120,6 +130,7 @@ export default {
   },
   data() {
     this.token = localStorage.token || sessionStorage.token
+    this.username = localStorage.username || sessionStorage.username
     return {
       article: {
         id: '',
@@ -128,7 +139,8 @@ export default {
         downvotes: 0,
         content: '',
         username: '',
-        tags: [],
+        tag: '',
+        tag_id: 0,
         category: {},
         createDate: '',
         editor: {
@@ -178,7 +190,7 @@ export default {
         that.article.editor = {}
         that.article.editor.value = data.data.content
         console.log(that.article.editor.value)
-        // that.getCommentsByArticle()
+        that.getCommentsByArticle()
       }).catch(error => {
         alert(error)
       })
@@ -189,36 +201,34 @@ export default {
         return;
       }
       that.comment.article.id = that.article.id
-      let parms = {articleId: that.article.id, content: that.comment.content}
-      publishComment(parms, this.$store.state.token).then(data => {
-        if (data.success) {
-          that.$message({type: 'success', message: '评论成功', showClose: true})
-          that.comment.content = ''
-          that.comments.unshift(data.data)
-          that.commentCountsIncrement()
-
-        } else {
-          that.$message({type: 'error', message: data.msg, showClose: true})
-        }
-
+      let params = {question_id: that.article.id, content: that.comment.content, username: that.username}
+      axios.post(host + '/api/v1/back_questions/', params, {
+        responseType: 'json',
+        withCredentials: true // 跨域情况可以携带cookie
+      }).then(data => {
+        that.$message({type: 'success', message: '评论成功', showClose: true})
+        that.comment.content = ''
+        that.comments.unshift(data.data)
+        that.commentCountsIncrement()
       }).catch(error => {
         if (error !== 'error') {
           that.$message({type: 'error', message: '评论失败', showClose: true})
         }
       })
     },
-
+    commentCountsIncrement() {
+      this.article.commentCounts += 1
+    },
     getCommentsByArticle() {
       let that = this
-      getCommentsByArticle(that.article.id).then(data => {
-        if (data.success) {
-          that.comments = data.data
-        } else {
-          that.$message({type: 'error', message: '评论加载失败', showClose: true})
-        }
+      axios.get(host + `/api/v1/back_questions/${that.article.id}/get_back_by_question`, {
+        responseType: 'json',
+        withCredentials: true // 跨域情况可以携带cookie
+      }).then(data => {
+        that.comments = data.data.results
       }).catch(error => {
         if (error !== 'error') {
-          that.$message({type: 'error', message: '评论加载失败', showClose: true})
+          that.$message({type: 'error', message: '回帖加载失败', showClose: true})
         }
       })
     }
@@ -240,12 +250,37 @@ export default {
 </script>
 
 <style>
-.me-view-container {
-  width: 1600px;
+/*非作者文本显示*/
+.article-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
 }
 
-.bk-main {
-  overflow: hidden;
+.article-title {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.author-info {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.content-container {
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+
+.me-view-container {
+  width: 1600px;
 }
 
 .me-view-title {

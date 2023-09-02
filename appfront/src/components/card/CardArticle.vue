@@ -5,7 +5,10 @@
     </div>
 
     <ul class="me-category-list">
-      <li v-for="a in articles" @click="view(a.id)" :style="itemStyle" :key="a.id" class="me-category-item"><a>{{a.title}}</a>
+      <li v-for="a in articles" @click="view(a.id)" :style="itemStyle" :key="a.id" class="me-category-item">
+        <a>
+          |  {{a.title}}  |
+        </a>
       </li>
     </ul>
   </bk-card>
@@ -36,7 +39,7 @@ import {bkCard} from 'bk-magic-vue'
     },
     methods: {
       view(id) {
-        this.$router.push({path: `/view/${id}`})
+        this.$router.push({path: `/articleView/${id}`})
       }
     }
   }

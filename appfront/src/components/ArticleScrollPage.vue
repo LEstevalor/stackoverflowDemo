@@ -39,7 +39,6 @@ export default {
   watch: {
     'query1': {
       handler() {
-        console.log("来了宝贝")
         this.innerPage.pageNumber = 1
         this.articles = []
         this.noData = false

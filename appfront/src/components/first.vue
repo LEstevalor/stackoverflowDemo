@@ -29,8 +29,6 @@ import ArticleScrollPage from './ArticleScrollPage'
 import axios from "axios";
 import {host} from "../../static/js/host";
 
-// import {getArticles, getHotArtices, getNewArtices} from '@/api/article'
-
 export default {
   name: 'first',
   component: {
@@ -41,8 +39,8 @@ export default {
     bkCol,
   },
   created() {
-    // this.getHotArtices()
-    // this.getNewArtices()
+    this.getHotArtices()
+    this.getNewArtices()
     this.getHotTags()
   },
   data() {
@@ -57,8 +55,14 @@ export default {
   methods: {
     getHotArtices() {
       let that = this
-      getHotArtices().then(data => {
-        that.hotArticles = data.data
+      axios.get(host + '/api/v1/questions/', { // 获取data列表中的数据
+        headers: {
+          'Authorization': 'Bearer ' + this.token
+        },
+        responseType: 'json',
+        params: {"hot_sort": true}
+      }).then(data => {
+        that.hotArticles = data.data.results
       }).catch(error => {
         if (error !== 'error') {
           that.$message({type: 'error', message: '最热文章加载失败!', showClose: true})
@@ -69,8 +73,14 @@ export default {
     },
     getNewArtices() {
       let that = this
-      getNewArtices().then(data => {
-        that.newArticles = data.data
+      axios.get(host + '/api/v1/questions/', { // 获取data列表中的数据
+        headers: {
+          'Authorization': 'Bearer ' + this.token
+        },
+        responseType: 'json',
+        params: {"time_sort": true}
+      }).then(data => {
+        that.newArticles = data.data.results
       }).catch(error => {
         if (error !== 'error') {
           that.$message({type: 'error', message: '最新文章加载失败!', showClose: true})
@@ -140,23 +150,13 @@ export default {
 
 .box {
   background-color: #f0f0f0;
-  padding: 16px;
+  padding: 13px;
   text-align: center;
-  height: 100%;
+  height: 80%;
 }
 
 .bk-container {
-  width: 960px;
-}
-
-.bk-aside {
-  margin-left: 20px;
-  width: 260px;
-}
-
-.bk-main {
-  padding: 0px;
-  line-height: 16px;
+  width: 90px;
 }
 
 .bk-card {
@@ -164,6 +164,6 @@ export default {
 }
 
 .bk-card:not(:first-child) {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 </style>

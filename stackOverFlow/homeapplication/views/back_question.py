@@ -143,3 +143,17 @@ class BackQuestionViewSet(GenericViewSet):
             logger.exception("回帖状态获取失败")
             raise error_codes.BACK_QUESTION_USER_GET_STATUS_FAILED
         return Response(BackUserStatusSerializer(status).data, status=status.HTTP_200_OK)
+
+    @atomic
+    @swagger_auto_schema(
+        tags=["回帖 BackQuestion"],
+        operation_summary="根据问题ID获取回帖"
+    )
+    @action(detail=True, methods=["GET"])
+    def get_back_by_question(self, request, pk):
+        try:
+            back_questions = BackQuestion.objects.filter(question_id=pk)
+        except Exception:
+            logger.exception("列出回帖失败")
+            raise error_codes.BACK_QUESTION_LIST_FAILED
+        return Response(BackListSerializer({"results": back_questions}).data, status=status.HTTP_200_OK)

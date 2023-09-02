@@ -14,7 +14,7 @@ from stackOverFlow.homeapplication.models import Question, TagsQuestion, User, Q
 from stackOverFlow.homeapplication.serializers.questions import (
     QuestionSerializer, QuestionCreateSerializer, QuestionUpdateSerializer, TagsListSerializer,
     QuestionsByTagSerializer, TagsHotListSerializer, TagsSerializer, QuestionUserSerializer,
-    QuestionUserStatusSerializer, TagsHotSerializer,
+    QuestionUserStatusSerializer, TagsHotSerializer, QuestionTagSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -97,7 +97,7 @@ class QuestionViewSet(GenericViewSet):
     )
     def list(self, request, *args, **kwargs):
         try:
-            questions = Question.objects.all_search(title=request.GET.get("title"))
+            questions = Question.objects.all_search(request=request)
         except Exception:
             logger.exception("问题搜查失败")
             raise error_codes.QUESTION_LIST_FAILED
@@ -111,10 +111,11 @@ class QuestionViewSet(GenericViewSet):
     def get_question(self, request, *args, **kwargs):
         try:
             question = get_object_or_404(Question, pk=request.GET.get("question_id"))
+            question.tag_id = TagsQuestion.objects.get(tag=question.tag).id
         except Exception:
             logger.exception("问题搜查失败")
             raise error_codes.QUESTION_LIST_FAILED
-        return Response(QuestionSerializer(question).data, status=status.HTTP_200_OK)
+        return Response(QuestionTagSerializer(question).data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         tags=["问题 Question"],

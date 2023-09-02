@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Q, ExpressionWrapper, F, IntegerField
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -48,12 +48,20 @@ class QuestionManager(models.Manager):
         back_question.delete()
         return question.delete()
 
-    def all_search(self, title):
+    def all_search(self, request):
         """查询贴（包含题目的模糊查询）"""
-        if not title:
-            return self.all()
-        else:
+        title = request.GET.get("title")
+        time_sort = request.GET.get("time_sort")
+        hot_sort = request.GET.get("hot_sort")
+        if title:
             return self.filter(Q(title__icontains=title))
+        elif time_sort:
+            return self.all().order_by('-update_time')[:5]
+        elif hot_sort:
+            # 赞成-反对数做前五排序
+            diff = ExpressionWrapper(F('upvotes') - F('downvotes'), output_field=IntegerField())
+            return self.all().annotate(difference=diff).order_by('-difference')[:5]
+        return self.all()
 
     def get_related_questions(self, question, limit=10):
         """相关性分析获取问题列表"""

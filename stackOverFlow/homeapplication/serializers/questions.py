@@ -9,6 +9,14 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class QuestionTagSerializer(serializers.ModelSerializer):
+    tag_id = serializers.IntegerField(help_text="标签ID")
+
+    class Meta:
+        model = Question
+        fields = "__all__"
+
+
 class QuestionCreateSerializer(serializers.Serializer):
     title = serializers.CharField(help_text="标题", max_length=100)
     content = serializers.CharField(help_text="内容")

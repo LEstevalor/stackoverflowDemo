@@ -13,10 +13,9 @@ class BackQuestionManager(models.Manager):
     def create_back_question(self, request, validated_data):
         """创建回帖"""
         from stackOverFlow.homeapplication.models import User
-        user = User.objects.get(username=request.user.username)
+        user = User.objects.get(username=validated_data["username"])
         user.back_question += 1
         user.save()
-        validated_data["username"] = user.username
         return super().create(**validated_data)
 
     def update_back_question(self, request, validated_data):
