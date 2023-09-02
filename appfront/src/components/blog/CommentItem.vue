@@ -8,7 +8,7 @@
         <span class="me-view-nickname">{{ comment.username }}</span>
         <div class="me-view-meta">
           <span>{{ rootCommentCounts - index }}楼</span>
-          <span>{{ comment.create_time }}</span>
+          <span>{{ formatDate(comment.create_time) }}</span>
         </div>
       </div>
     </div>
@@ -33,7 +33,7 @@
             <span>{{ c.content }}</span>
           </div>
           <div class="me-view-meta">
-            <span style="padding-right: 10px">{{ c.create_time }}</span>
+            <span style="padding-right: 10px">{{ formatDate(c.create_time) }}</span>
             <a class="me-view-comment-tool" @click="showComment(c.id, c.username)">
               <i class="me-icon-comment"></i>&nbsp;回复
             </a>
@@ -59,6 +59,7 @@
 <script>
 import {bkButton, bkInput} from 'bk-magic-vue'
 import defaultAvatar from '../../assets/book.png'
+import {formatDate} from '../../api/time'
 // import {publishComment} from '@/api/comment'
 
 export default {
@@ -81,10 +82,10 @@ export default {
       reply: this.getEmptyReply()
     }
   },
-  created() {
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-  },
   methods: {
+    formatDate(time) {
+      return formatDate(time)
+    },
     showComment(commentShowIndex, username) {
       this.reply = this.getEmptyReply()
 
@@ -186,7 +187,7 @@ export default {
 }
 
 .me-view-comment-content {
-  line-height: 1.5;
+  line-height: 1;
 }
 
 .me-view-comment-tools {

@@ -215,7 +215,6 @@ export default {
       })
     },
     commentCountsIncrement() {
-      console.log("1234568888988978946846")
       this.article.commentCounts += 1
     },
     getCommentsByArticle() {
@@ -232,7 +231,7 @@ export default {
     }
   },
   components: {
-    CommmentItem,
+    'commmentz-item': CommmentItem,
     'markdown-editor': MarkdownEditor
   },
   //组件内的守卫 调整body的背景色
