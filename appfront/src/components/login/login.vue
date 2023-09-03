@@ -92,7 +92,7 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     let that = this
     setTimeout(function () {
       that.loading = false
@@ -371,6 +371,7 @@ export default {
 </script>
 
 <style scoped>
+
 #loginDiv {
   width: 40%;
   display: flex;
