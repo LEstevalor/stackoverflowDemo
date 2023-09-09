@@ -1,7 +1,9 @@
 <template>
-  <scroll-page :loading="loading" :offset="offset" :no-data="noData" v-on:load="load">
-    <article-item v-for="a in articles" :key="a.id" v-bind="a"></article-item>
-  </scroll-page>
+  <div class="background">
+    <scroll-page :loading="loading" :offset="offset" :no-data="noData" v-on:load="load">
+      <article-item v-for="a in articles" :key="a.id" v-bind="a"></article-item>
+    </scroll-page>
+  </div>
 </template>
 
 <script>
@@ -132,12 +134,7 @@ export default {
 </script>
 
 <style scoped>
-.bk-card {
-  border-radius: 0;
-}
-
-.bk-card:not(:first-child) {
-  margin-top: 10px;
-
+.background {
+  background-image: url("../assets/star6.gif");
 }
 </style>

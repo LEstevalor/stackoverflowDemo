@@ -1,10 +1,24 @@
 <template>
-  <div id="write" v-title :data-title="title">
+  <div id="write" v-title :data-title="title" class="background">
     <bk-container>
       <div class="me-write-info">写文章</div>
       <div class="me-write-btn">
         <bk-button class="publish-btn" @click="publishShow">发布</bk-button>
-        <bk-button class="cancel-btn" @click="cancel">取消</bk-button>
+        <bk-button theme="warning" class="cancel-btn" @click="cancel">取消</bk-button>
+      </div>
+
+      <div>
+        <div class="me-write-info-left">文章标签</div>
+        <bk-select v-model="tag_value" style="width: 250px;" class="select-use">
+          <bk-option class="custom-option"
+                     v-for="option in tags"
+                     :key="option.tag"
+                     :id="option.tag"
+                     :name="option.tag">
+            <span>{{ option.tag }}</span>
+            <i class="bk-icon icon-close"></i>
+          </bk-option>
+        </bk-select>
       </div>
 
       <bk-container class="me-area me-write-box">
@@ -37,18 +51,13 @@
                       placeholder="请输入摘要">
             </bk-input>
           </bk-form-item>
-
-          <bk-form-item label="文章标签" prop="tags">
-            <bk-checkbox-group v-model="articleForm.tags">
-              <bk-checkbox v-for="t in tags" :key="t.id" :label="t.id" name="tags">{{ t.tagName }}</bk-checkbox>
-            </bk-checkbox-group>
-          </bk-form-item>
         </bk-form>
         <div slot="footer" class="dialog-footer">
           <bk-button @click="publishVisible = false">取 消</bk-button>
-          <bk-button type="primary" @click="publish('articleForm')">发布</bk-button>
+          <bk-button type="primary" @click="publish('articleForm')">发 布</bk-button>
         </div>
       </bk-dialog>
+
     </bk-container>
   </div>
 </template>
@@ -60,9 +69,9 @@ import {
 } from 'bk-magic-vue'
 import BaseHeader from '../BaseHeader'
 import MarkdownEditor from './MarkdownEditor'
+import axios from "axios";
+import {host} from "../../../static/js/host";
 // import {publishArticle, getArticleById} from '@/api/article'
-// import {getAllCategorys} from '@/api/category'
-// import {getAllTags} from '@/api/tag'
 
 export default {
   name: 'BlogWrite',
@@ -71,21 +80,23 @@ export default {
     bkCheckboxGroup, bkSelect, bkOption
   },
   mounted() {
+    this.getTags()
     if (this.$route.params.id) {
       this.getArticleById(this.$route.params.id)
     }
-    this.getCategorysAndTags()
-    this.editorToolBarToFixedWrapper = this.$_.throttle(this.editorToolBarToFixed, 200)
-    window.addEventListener('scroll', this.editorToolBarToFixedWrapper, false);
+    // this.editorToolBarToFixedWrapper = this.$_.throttle(this.editorToolBarToFixed, 200)
+    // window.addEventListener('scroll', this.editorToolBarToFixedWrapper, false);
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.editorToolBarToFixedWrapper, false)
   },
   data() {
+    this.token = localStorage.token || sessionStorage.token
     return {
       publishVisible: false,
       categorys: [],
       tags: [],
+      tag_value: "",
       articleForm: {
         id: '',
         title: '',
@@ -145,17 +156,12 @@ export default {
     getArticleById(id) {
       let that = this
       getArticleById(id).then(data => {
-
         Object.assign(that.articleForm, data.data)
         that.articleForm.editor.value = data.data.body.content
-
         let tags = this.articleForm.tags.map(function (item) {
           return item.id;
         })
-
         this.articleForm.tags = tags
-
-
       }).catch(error => {
         if (error !== 'error') {
           that.$message({type: 'error', message: '文章加载失败', showClose: true})
@@ -232,42 +238,37 @@ export default {
         }
       });
     },
+    // 取消按钮
     cancel() {
-      this.$confirm('文章将不会保存, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$router.push('/')
+      this.$bkInfo({
+        type: 'warning',
+        title: '此操作会清空所写文章',
+        confirmFn(vm) {
+          location.reload();
+          console.warn(vm)
+        },
+        cancelFn(vm) {
+          console.warn(vm)
+        },
+        afterLeaveFn(vm) {
+          console.log(vm)
+        }
       })
     },
-    getCategorysAndTags() {
+    // 获取所有标签
+    getTags() {
       let that = this
-      getAllCategorys().then(data => {
-        if (data.success) {
-          that.categorys = data.data
-        } else {
-          that.$message({type: 'error', message: '文章分类加载失败', showClose: true})
-        }
-
+      axios.get(host + '/api/v1/questions/list_tag/', { // 获取data列表中的数据
+        headers: {
+          'Authorization': 'Bearer ' + this.token
+        },
+        responseType: 'json'
+      }).then(data => {
+        that.tags = data.data.results
+        console.log(that.tags + "11111")
       }).catch(error => {
-        if (error !== 'error') {
-          that.$message({type: 'error', message: '文章分类加载失败', showClose: true})
-        }
+        that.$message({type: 'error', message: '标签加载失败', showClose: true})
       })
-
-      getAllTags().then(data => {
-        if (data.success) {
-          that.tags = data.data
-        } else {
-          that.$message({type: 'error', message: '标签加载失败', showClose: true})
-        }
-      }).catch(error => {
-        if (error !== 'error') {
-          that.$message({type: 'error', message: '标签加载失败', showClose: true})
-        }
-      })
-
     },
     editorToolBarToFixed() {
 
@@ -299,11 +300,29 @@ export default {
 </script>
 
 <style>
+.background {
+  background-image: url("../../assets/star4.gif");
+}
+
+.select-use {
+  text-align: center;
+  color: #03f892;
+  font-weight: bold; /*加粗*/
+}
+
 .me-write-info {
   font-size: 1.2rem;
   font-weight: bold;
   color: #4a4a4a;
   line-height: 60px;
+}
+
+.me-write-info-left {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4a4a4a;
+  line-height: 60px;
+  text-align: left;
 }
 
 .me-write-btn {
@@ -372,5 +391,22 @@ export default {
 .me-title img {
   max-height: 2.4rem;
   max-width: 100%;
+}
+
+.custom-option .icon-close {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 3px;
+  font-size: 26px;
+  color: #f50057;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  text-align: center;
+}
+
+.custom-option:hover .icon-close {
+  display: block;
 }
 </style>

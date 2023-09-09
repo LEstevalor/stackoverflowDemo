@@ -126,7 +126,7 @@
         </bk-navigation-menu>
       </template>
       <router-view class="monitor-navigation-content"></router-view>
-      <fx67ll-binary-clock :isShowTime="true" :zoomSize="1"></fx67ll-binary-clock>
+<!--      <fx67ll-binary-clock :isShowTime="true" :zoomSize="1"></fx67ll-binary-clock>-->
     </bk-navigation>
   </div>
 </template>
@@ -192,7 +192,7 @@ export default {
             url: '/uptime_check/summary/'
           },
           {
-            name: '文章',
+            name: '文章吧',
             icon: 'icon-clock-shape',
             url: '/datasource/'
           },
@@ -202,7 +202,7 @@ export default {
             url: '/bp/'
           },
           {
-            name: '主页面',
+            name: '写文章',
             icon: 'icon-empty-shape',
             url: '/biz_manage/',
             group: true
@@ -371,13 +371,13 @@ export default {
         this.$router.push('/top')
       } else if (obj === '标签列表') {
         this.$router.push('/college')
-      } else if (obj === '文章') {
+      } else if (obj === '文章吧') {
         this.$router.push('/ArticleScrollPage')
       } else if (obj === '标签吧') {
         this.$router.push('/tag')
       } else if (obj === '主页') {
         this.$router.push('/first')
-      } else if (obj === '主页面') {
+      } else if (obj === '写文章') {
         this.$router.push('/BaseHeader')
       } else if (obj === '问题吧') {
         this.$router.push('/top_question')

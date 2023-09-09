@@ -4,6 +4,7 @@
 <!--    <img src="../assets/star.gif" style="float:left;"/>&ndash;&gt;-->
     <bk-swiper :pics="pics" :loop-time="4000" class="swiper" style="float:right;"></bk-swiper>
     <h1 class="artistic-title">KEY: 数据库  存储  OS  NOSQL  MYSQL  REDIS  网络  并发  缓存  内存  服务  集群 DOCKER K8S</h1>
+    <fx67ll-binary-clock :isShowTime="true" :zoomSize="1"></fx67ll-binary-clock>
   </div>
 </template>
 
@@ -20,7 +21,7 @@ import sixthSwiper from '../assets/dragonCenter.jpg'
 export default {
   name: 'top',
   components: {
-    bkSwiper // 轮播图
+    bkSwiper, // 轮播图
   },
   data () {
     return {
