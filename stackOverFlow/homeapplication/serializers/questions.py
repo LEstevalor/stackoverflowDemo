@@ -21,6 +21,7 @@ class QuestionCreateSerializer(serializers.Serializer):
     title = serializers.CharField(help_text="标题", max_length=100)
     content = serializers.CharField(help_text="内容")
     tag = serializers.CharField(help_text="标签名称", default="默认")
+    username = serializers.CharField(help_text="用户名", max_length=100)
 
 
 class QuestionUpdateSerializer(serializers.Serializer):

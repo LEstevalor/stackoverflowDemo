@@ -23,6 +23,17 @@
             icon="bk-icon-edit"> 编辑
           </bk-button>
         </div>
+
+        <div class="me-view-end">
+          <bk-alert
+            title="文章 Begin"
+            type="success"
+            center
+            :closable="false">
+          </bk-alert>
+        </div>
+
+
         <div class="me-view-content">
           <div class="article-container">
             <div class="author-info">
@@ -41,7 +52,7 @@
 
         <div class="me-view-end">
           <bk-alert
-            title="文章End..."
+            title="文章 End"
             type="success"
             center
             :closable="false">
@@ -94,7 +105,7 @@
             v-for="(c,index) in comments"
             :comment="c"
             :articleId="article.id"
-            :index="index"
+            :index="comments.length - index - 1"
             :rootCommentCounts="comments.length"
             :key="c.id">
             <!--            @commentCountsIncrement="commentCountsIncrement"-->
@@ -210,6 +221,9 @@ export default {
         that.comment.content = ''
         that.comments = data.data.results
         that.commentCountsIncrement()
+        that.successInfoBox("评论成功")
+        // 刷新当前页面
+        location.reload();
       }).catch(error => {
         this.errorInfoBox("评论失败")
       })

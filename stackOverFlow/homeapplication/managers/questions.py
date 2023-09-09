@@ -15,7 +15,7 @@ class QuestionManager(models.Manager):
     def create_question(self, request, validated_data):
         """创建问题"""
         from stackOverFlow.homeapplication.models import User, TagsQuestion
-        user = User.objects.get(username=request.user.username)
+        user = User.objects.get(username=validated_data["username"])
         user.question_count += 1
         user.save()
 

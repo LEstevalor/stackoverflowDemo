@@ -139,9 +139,6 @@ export default {
     getPageData () { // 分页操作显示列表
       this.page_data = []
       let start = (this.pagination.current - 1) * this.pagination.limit
-      console.log(start)
-      console.log(this.pagination.current * this.pagination.limit)
-      console.log(this.pagination.count)
       for (let i = start; i < this.pagination.current * this.pagination.limit  && i < this.pagination.count; i++) {
           this.page_data.push(this.data[i]);
       }
@@ -164,6 +161,7 @@ export default {
             'tag': this.create_tag,
             'id': Number(response.data.id)
           })
+          this.handleSingle('标签 Tag', '添加标签成功', {theme: 'success'})
         }).catch(error => {
           alert(error.response.data.message)
           console.log(error.response.data.message)
@@ -174,7 +172,7 @@ export default {
     },
     search_data () { // 通过v-model绑定的textcontent获取文本内容，通过下滑框对应的value1获取下拉框选择的对象  搜索数据
       if (!this.textcontent) {
-        this.handleSingle('欢迎使用GDUT DBA', '龙洞小助手提醒您搜索内容请有所输入，否则还是原信息')
+        this.handleSingle('欢迎使用GDUT DBA', '龙洞小助手提醒您搜索内容请有所输入，否则还是原信息', {theme: 'warning'})
         if (!this.cur_getData) {
           this.getData()
         }
@@ -211,7 +209,7 @@ export default {
       this.to_excel(this.select_list_all ? this.data : this.select_list)
     },
     to_excel (data) { // 转化成excel
-      let str = '<tr><td>学院名称</td><td>院长名称</td><td>简介</td><td>学院ID</td></tr>' // 列标题
+      let str = '<tr><td>序号</td><td>贴数</td><td>创建时间</td><td>更新时间</td><td>标签名称</td></tr>' // 列标题
       // 循环遍历，每行加入tr标签，每个单元格加td标签
       for (let i = 0; i < data.length; i++) {
         str += '<tr>'
@@ -263,9 +261,6 @@ export default {
     curAllSelected (selection) { // 点首栏的选择全部才会进入这里
       this.select_list = [] // 清空select_list_id，以防突然地不勾选或勾选
       this.select_list_all = selection.length > 0
-      console.log(selection)
-      console.log(selection.length)
-      console.log(this.select_list_all)
     },
     errorInfoBox (msg) {
       const a = this.$bkInfo({
@@ -283,8 +278,7 @@ export default {
         }
       }, 1000)
     },
-    handleSingle (title, message) {
-      let msg = {theme: 'warning'}
+    handleSingle (title, message, msg) {
       msg.title = title
       msg.message = message
       msg.offsetY = 80

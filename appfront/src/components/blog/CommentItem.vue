@@ -1,59 +1,61 @@
 <template>
-  <div class="me-view-comment-item">
-    <div class="me-view-comment-author">
-      <a class="">
-        <img class="me-view-picture" :src="this.avatar"></img>
-      </a>
-      <div class="me-view-info">
-        <span class="me-view-nickname">{{ comment.username }}</span>
-        <div class="me-view-meta">
-          <span>{{ rootCommentCounts - index }}楼</span>
-          <span>{{ formatDate(comment.create_time) }}</span>
-        </div>
-      </div>
-    </div>
-    <div>
-      <p class="me-view-comment-content">{{ comment.content }}</p>
-      <div class="me-view-comment-tools">
-        <!--<a class="me-view-comment-tool">-->
-        <!--<i class="el-icon-caret-top"></i> 20-->
-        <!--</a>-->
-        <a class="me-view-comment-tool" @click="showComment(-1,comment.username)">
-          <i class="me-icon-comment"></i>&nbsp; 评论
+  <bk-card :body-style="{ padding: '16px' }">
+    <div class="me-view-comment-item">
+      <div class="me-view-comment-author">
+        <a class="">
+          <img class="me-view-picture" :src="this.avatar"></img>
         </a>
-      </div>
-
-      <div class="me-reply-list">
-        <div class="me-reply-item" v-for="c in comment.childrens" :key="c.id">
-          <div style="font-size: 14px">
-            <span class="me-reply-user">{{ c.username }}:&nbsp;&nbsp;</span>
-
-            <span v-if="c.level == 2" class="me-reply-user">@{{ c.username }} </span>
-
-            <span>{{ c.content }}</span>
-          </div>
+        <div class="me-view-info">
+          <span class="me-view-nickname">{{ comment.username }}</span>
           <div class="me-view-meta">
-            <span style="padding-right: 10px">{{ formatDate(c.create_time) }}</span>
-            <a class="me-view-comment-tool" @click="showComment(c.id, c.username)">
-              <i class="me-icon-comment"></i>&nbsp;回复
-            </a>
+            <span>{{ rootCommentCounts - index }}楼</span>
+            <span>{{ formatDate(comment.create_time) }}</span>
           </div>
         </div>
-        <div class="me-view-comment-write" v-show="commentShow">
-          <bk-input
-            v-model="reply.content"
-            type="input"
-            style="width: 90%"
-            :placeholder="placeholder"
-            class="me-view-comment-text"
-            resize="none">
-          </bk-input>
-          <bk-button style="margin-left: 8px" @click="publishComment()" type="text">评论</bk-button>
-        </div>
       </div>
+      <div>
+        <p class="me-view-comment-content">{{ comment.content }}</p>
+        <div class="me-view-comment-tools">
+          <!--<a class="me-view-comment-tool">-->
+          <!--<i class="el-icon-caret-top"></i> 20-->
+          <!--</a>-->
+          <a class="me-view-comment-tool" @click="showComment(-1,comment.username)">
+            <i class="me-icon-comment"></i>&nbsp; 评论
+          </a>
+        </div>
 
+        <div class="me-reply-list">
+          <div class="me-reply-item" v-for="c in comment.childrens" :key="c.id">
+            <div style="font-size: 14px">
+              <span class="me-reply-user">{{ c.username }}:&nbsp;&nbsp;</span>
+
+              <span v-if="c.level == 2" class="me-reply-user">@{{ c.username }} </span>
+
+              <span>{{ c.content }}</span>
+            </div>
+            <div class="me-view-meta">
+              <span style="padding-right: 10px">{{ formatDate(c.create_time) }}</span>
+              <a class="me-view-comment-tool" @click="showComment(c.id, c.username)">
+                <i class="me-icon-comment"></i>&nbsp;回复
+              </a>
+            </div>
+          </div>
+          <div class="me-view-comment-write" v-show="commentShow">
+            <bk-input
+              v-model="reply.content"
+              type="input"
+              style="width: 90%"
+              :placeholder="placeholder"
+              class="me-view-comment-text"
+              resize="none">
+            </bk-input>
+            <bk-button style="margin-left: 8px" @click="publishComment()" type="text">评论</bk-button>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
+  </bk-card>
 </template>
 
 <script>

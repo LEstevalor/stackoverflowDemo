@@ -1,5 +1,9 @@
 <template>
   <div class="background">
+    <div class="search-container">
+      <input class="search-input" v-model="title" type="search" placeholder="搜索...">
+      <button class="search-button" @click="search">搜索</button>
+    </div>
     <scroll-page :loading="loading" :offset="offset" :no-data="noData" v-on:load="load">
       <article-item v-for="a in articles" :key="a.id" v-bind="a"></article-item>
     </scroll-page>
@@ -73,6 +77,7 @@ export default {
   data() {
     this.token = localStorage.token || sessionStorage.token
     return {
+      title: '',
       loading: false,
       noData: false,
       innerPage: {
@@ -124,6 +129,9 @@ export default {
       this.$router.push(`/articleView/${id}`)
       /*反携号可以代入外部值*/
     },
+    search() {
+
+    },
   },
   components: {
     'article-item': ArticleItem,
@@ -136,5 +144,45 @@ export default {
 <style scoped>
 .background {
   background-image: url("../assets/star6.gif");
+}
+
+/* 搜索容器样式 */
+.search-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  /*background-color: #f5f5f5;*/
+}
+
+/* 搜索输入框样式 */
+.search-input {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  font-size: 16px;
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 搜索按钮样式 */
+.search-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+/* 搜索按钮悬停效果 */
+.search-button:hover {
+  background-color: #0056b3;
 }
 </style>

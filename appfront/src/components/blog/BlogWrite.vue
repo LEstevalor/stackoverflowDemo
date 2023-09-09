@@ -37,27 +37,6 @@
           <markdown-editor :editor="articleForm.editor" class="me-write-editor"></markdown-editor>
         </bk-main>
       </bk-container>
-
-      <bk-dialog title="摘要 分类 标签"
-                 :visible.sync="publishVisible"
-                 :close-on-click-modal=false
-                 custom-class="me-dialog">
-
-        <bk-form :model="articleForm" ref="articleForm" :rules="rules">
-          <bk-form-item prop="summary">
-            <bk-input type="textarea"
-                      v-model="articleForm.summary"
-                      :rows="6"
-                      placeholder="请输入摘要">
-            </bk-input>
-          </bk-form-item>
-        </bk-form>
-        <div slot="footer" class="dialog-footer">
-          <bk-button @click="publishVisible = false">取 消</bk-button>
-          <bk-button type="primary" @click="publish('articleForm')">发 布</bk-button>
-        </div>
-      </bk-dialog>
-
     </bk-container>
   </div>
 </template>
@@ -92,6 +71,7 @@ export default {
   },
   data() {
     this.token = localStorage.token || sessionStorage.token
+    this.username = localStorage.username || sessionStorage.username
     return {
       publishVisible: false,
       categorys: [],
@@ -101,7 +81,6 @@ export default {
         id: '',
         title: '',
         summary: '',
-        category: '',
         tags: [],
         editor: {
           value: '',
@@ -170,24 +149,35 @@ export default {
     },
     publishShow() {
       if (!this.articleForm.title) {
-        this.$message({message: '标题不能为空哦', type: 'warning', showClose: true})
+        this.warningInfoBox('标题不能为空哦')
         return
       }
-
       if (this.articleForm.title.length > 30) {
-        this.$message({message: '标题不能大于30个字符', type: 'warning', showClose: true})
+        this.warningInfoBox('标题不能大于30个字符')
         return
       }
-
       if (!this.articleForm.editor.ref.d_render) {
-        this.$message({message: '内容不能为空哦', type: 'warning', showClose: true})
+        this.warningInfoBox('内容不能为空哦')
         return
       }
-
-      this.publishVisible = true;
+      if (!this.tag_value) {
+        this.warningInfoBox('标签不能为空')
+        return
+      }
+      let data = {tag: this.tag_value, title: this.articleForm.title, content: this.articleForm.editor.ref.d_render,
+                  username: this.username}
+      axios.post(host + '/api/v1/questions/', data, {
+        responseType: 'json',
+        withCredentials: true // 跨域情况可以携带cookie
+      }).then(data => {
+        this.articleForm.id = data.data.id
+        this.$router.push(`/articleView/${data.data.id}`)
+        this.successInfoBox("文章发布成功")
+      }).catch(error => {
+        this.errorInfoBox("文章发布失败")
+      })
     },
     publish(articleForm) {
-
       let that = this
 
       this.$refs[articleForm].validate((valid) => {
@@ -265,13 +255,11 @@ export default {
         responseType: 'json'
       }).then(data => {
         that.tags = data.data.results
-        console.log(that.tags + "11111")
       }).catch(error => {
         that.$message({type: 'error', message: '标签加载失败', showClose: true})
       })
     },
     editorToolBarToFixed() {
-
       let toolbar = document.querySelector('.v-note-op');
       let curHeight = document.documentElement.scrollTop || document.body.scrollTop;
       if (curHeight >= 160) {
@@ -281,6 +269,37 @@ export default {
         document.getElementById("placeholder").style.display = "none";
         toolbar.classList.remove("me-write-toolbar-fixed");
       }
+    },
+    warningInfoBox(msg) {
+      this.$bkInfo({
+        type: 'warning',
+        title: msg,
+        cancelFn(vm) {
+          console.warn(vm)
+        }
+      })
+    },
+    successInfoBox(msg) {
+      const h = this.$createElement
+      const a = this.$bkInfo({
+        type: 'success',
+        title: msg,
+        showFooter: false,
+        subHeader: h('a', {
+          style: {
+            color: '#3a84ff',
+            textDecoration: 'none',
+            cursor: 'pointer'
+          }
+        })
+      })
+      let num = 1
+      let t = setInterval(() => {
+        if (--num === 0) {
+          clearInterval(t)
+          a.close()
+        }
+      }, 1000)
     }
   },
   components: {
@@ -295,7 +314,7 @@ export default {
   beforeRouteLeave(to, from, next) {
     window.document.body.style.backgroundColor = '#f5f5f5';
     next();
-  }
+  },
 }
 </script>
 
