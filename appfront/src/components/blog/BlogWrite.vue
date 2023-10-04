@@ -50,7 +50,6 @@ import BaseHeader from '../BaseHeader'
 import MarkdownEditor from './MarkdownEditor'
 import axios from "axios";
 import {host} from "../../../static/js/host";
-// import {publishArticle, getArticleById} from '@/api/article'
 
 export default {
   name: 'BlogWrite',
@@ -61,7 +60,7 @@ export default {
   mounted() {
     this.getTags()
     if (this.$route.params.id) {
-      this.getArticleById(this.$route.params.id)
+      this.getArticle()
     }
     // this.editorToolBarToFixedWrapper = this.$_.throttle(this.editorToolBarToFixed, 200)
     // window.addEventListener('scroll', this.editorToolBarToFixedWrapper, false);
@@ -132,15 +131,33 @@ export default {
     }
   },
   methods: {
+    getArticle() {
+      let that = this
+      axios.get(host + '/api/v1/questions/get_question/', { // 获取data列表中的数据
+        headers: {
+          'Authorization': 'Bearer ' + this.token
+        },
+        responseType: 'json',
+        params: {question_id: that.$route.params.id}
+      }).then(data => {
+        this.articleForm.id = data.data.id
+        that.articleForm.editor.ref.d_render = data.data.content
+        that.articleForm.editor.value = data.data.content
+        that.tag_value = data.data.tag
+        that.articleForm.title = data.data.title
+      }).catch(error => {
+        alert(error)
+      })
+    },
     getArticleById(id) {
       let that = this
-      getArticleById(id).then(data => {
-        Object.assign(that.articleForm, data.data)
-        that.articleForm.editor.value = data.data.body.content
-        let tags = this.articleForm.tags.map(function (item) {
-          return item.id;
-        })
-        this.articleForm.tags = tags
+      let data = {tag: this.tag_value, title: this.articleForm.title, content: this.articleForm.editor.ref.d_render}
+      axios.put(host + `/api/v1/questions/${id}/`, data, {
+        responseType: 'json',
+        withCredentials: true // 跨域情况可以携带cookie
+      }).then(data => {
+        this.articleForm.id = data.data.id
+        this.$router.push(`/articleView/${data.data.id}`)
       }).catch(error => {
         if (error !== 'error') {
           that.$message({type: 'error', message: '文章加载失败', showClose: true})
@@ -166,6 +183,9 @@ export default {
       }
       let data = {tag: this.tag_value, title: this.articleForm.title, content: this.articleForm.editor.ref.d_render,
                   username: this.username}
+      if (this.$route.params.id) {
+        this.getArticleById(this.$route.params.id)
+      } else {
       axios.post(host + '/api/v1/questions/', data, {
         responseType: 'json',
         withCredentials: true // 跨域情况可以携带cookie
@@ -176,6 +196,7 @@ export default {
       }).catch(error => {
         this.errorInfoBox("文章发布失败")
       })
+        }
     },
     publish(articleForm) {
       let that = this

@@ -12,9 +12,9 @@
 import { bkSwiper } from 'bk-magic-vue'
 import firstSwiper from '../assets/2023label.jpg'
 import secondSwiper from '../assets/gdut_label.jpg'
-import thirdSwiper from '../assets/db.jpg'
+import thirdSwiper from '../assets/gdut1.jpg'
 import fourthSwiper from '../assets/nosql.jpg'
-import fifthSwiper from '../assets/machine.jpg'
+import fifthSwiper from '../assets/gdut2.jpg'
 import sixthSwiper from '../assets/dragonCenter.jpg'
 
 

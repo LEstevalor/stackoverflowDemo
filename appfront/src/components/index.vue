@@ -18,6 +18,10 @@
             </span>
             {{ nav.id }}
           </div>
+<!--          <div class="search-container">-->
+<!--            <input class="search-input" v-model="title" type="search" placeholder="搜索全栈问题贴...">-->
+<!--            <button class="search-button" @click="getArticles">搜 索</button>-->
+<!--          </div>-->
           <bk-select class="header-select" :class="{ 'is-left': curNav.nav === 'left-right' }" v-model="header.bizId"
                      :clearable="false" searchable>
             <bk-option v-for="option in header.selectList"

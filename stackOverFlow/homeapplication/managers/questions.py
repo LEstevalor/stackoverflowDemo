@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from django.db.models import Count, Q, ExpressionWrapper, F, IntegerField
+from django.db.models import Q, ExpressionWrapper, F, IntegerField
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class QuestionManager(models.Manager):
     """问题贴管理"""
-    def create_question(self, request, validated_data):
+    def create_question(self, validated_data):
         """创建问题"""
         from stackOverFlow.homeapplication.models import User, TagsQuestion
         user = User.objects.get(username=validated_data["username"])
@@ -27,14 +27,15 @@ class QuestionManager(models.Manager):
         validated_data["username"] = user.username
         return super().create(**validated_data)
 
-    def update_question(self, request, validated_data, pk):
+    def update_question(self, validated_data, pk):
         """更新问题"""
         from stackOverFlow.homeapplication.models import TagsQuestion
         if validated_data.get("tag"):
             tags_question = TagsQuestion.objects.filter(tag=validated_data["tag"])
             if not tags_question.exists():
                 TagsQuestion.objects.create(tag=validated_data["tag"])
-        return super().update(**validated_data)
+        question = self.filter(id=pk)
+        question.update(**validated_data)
 
     def delete_question(self, request, question):
         """删除帖"""
@@ -63,7 +64,7 @@ class QuestionManager(models.Manager):
             return self.all().annotate(difference=diff).order_by('-difference')[:5]
         return self.all()
 
-    def get_related_questions(self, question, limit=10):
+    def get_related_questions(self, question, limit=5):
         """相关性分析获取问题列表"""
         from stackOverFlow.homeapplication.models import Question
         all_questions = Question.objects.exclude(id=question.id)
@@ -76,7 +77,7 @@ class QuestionManager(models.Manager):
         # 进行排序并限制结果数量
         sorted_indices = similarities.argsort().flatten()
         top_indices = sorted_indices[-limit:]
-        related_questions = [all_questions[i] for i in top_indices]
+        related_questions = [all_questions[int(i)] for i in top_indices]
         return related_questions
 
     def vote_back(self, request, question):

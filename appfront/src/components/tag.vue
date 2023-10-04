@@ -55,7 +55,6 @@ export default {
     bkTabPane
   },
   created() {
-    console.log("hhhhhhhhhhhhhhhhhhhhhhhh")
     console.log(this.$route.params.type)
     // this.getCategorys()
     this.getTags()

@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
 
-from stackOverFlow.homeapplication.models import BackQuestion, Question, BackUser
+from stackOverFlow.homeapplication.models import BackQuestion, Question, BackUser, User
 
 
 class BackQuestionSerializer(serializers.ModelSerializer):
@@ -12,14 +12,27 @@ class BackQuestionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class BackQuestionCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BackQuestion
-        exclude = ["username", "upvotes", "downvotes"]
+class BackQuestionCreateSerializer(BackQuestionSerializer):
+    class Meta(BackQuestionSerializer.Meta):
+        read_only_fields = ["username", "upvotes", "downvotes"]
+
+    def validate_question_id(self, value):
+        if not Question.objects.filter(id=value).exists():
+            raise serializers.ValidationError("Invalid question_id.")
+        return value
+
+    def save(self, **kwargs):
+        # Your custom logic here
+        user = User.objects.get(username=kwargs["username"])
+        user.back_question += 1
+        user.save()
+        # Call the superclass's save method
+        return super().save(**kwargs)
 
 
-class BackQuestionUpdateSerializer(serializers.Serializer):
-    content = serializers.CharField(help_text="内容")
+class BackQuestionUpdateSerializer(BackQuestionSerializer):
+    class Meta(BackQuestionSerializer.Meta):
+        read_only_fields = [f.name for f in BackQuestion._meta.fields if f.name not in ["content"]]
 
 
 class BackListSerializer(serializers.Serializer):

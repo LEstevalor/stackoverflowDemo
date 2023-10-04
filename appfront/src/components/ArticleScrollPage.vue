@@ -1,9 +1,9 @@
 <template>
   <div class="background">
-    <div class="search-container">
-      <input class="search-input" v-model="title" type="search" placeholder="搜索...">
-      <button class="search-button" @click="search">搜索</button>
-    </div>
+<!--    <div class="search-container">-->
+<!--      <input class="search-input" v-model="title" type="search" placeholder="搜索...">-->
+<!--      <button class="search-button" @click="getArticles">搜索</button>-->
+<!--    </div>-->
     <scroll-page :loading="loading" :offset="offset" :no-data="noData" v-on:load="load">
       <article-item v-for="a in articles" :key="a.id" v-bind="a"></article-item>
     </scroll-page>
@@ -98,17 +98,22 @@ export default {
     },
     getArticles() {
       let path = '/api/v1/questions/'
-      console.log(this.query1.tag_id)
       if (this.query1.tag_id)
         path = `/api/v1/questions/${this.query1.tag_id}/get_question_by_tag/`
-
+      if (this.query1.article_id)
+        path = `/api/v1/questions/${this.query1.article_id}/get_related_questions/`
+      // 支持模糊搜索
+      let params = {}
+      if (this.title !== '') {
+        params = {"title": this.title}
+      }
       this.loading = true
-      // getArticles(this.query, this.innerPage)
       axios.get(host + path, { // 获取data列表中的数据
         headers: {
           'Authorization': 'Bearer ' + this.token
         },
-        responseType: 'json'
+        responseType: 'json',
+        params: params
       }).then(data => {
         let newArticles = data.data.results
         if (newArticles && newArticles.length > 0) {
@@ -128,9 +133,6 @@ export default {
     view(id) {
       this.$router.push(`/articleView/${id}`)
       /*反携号可以代入外部值*/
-    },
-    search() {
-
     },
   },
   components: {

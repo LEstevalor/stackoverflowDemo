@@ -78,6 +78,53 @@ export default {
     }, 500)
   },
   methods: {
+    warningInfoBox(msg) {
+      this.$bkInfo({
+        type: 'warning',
+        title: msg,
+        cancelFn(vm) {
+          console.warn(vm)
+        }
+      })
+    },
+    errorInfoBox(msg) {
+      const a = this.$bkInfo({
+        type: 'error',
+        title: 'Fail:' + msg,
+        subTitle: '窗口2秒后关闭',
+        showFooter: false
+      })
+      let num = 2
+      let t = setInterval(() => {
+        a.subTitle = `此窗口${--num}秒后关闭`
+        if (num === 0) {
+          clearInterval(t)
+          a.close()
+        }
+      }, 1000)
+    },
+    successInfoBox(msg) {
+      const h = this.$createElement
+      const a = this.$bkInfo({
+        type: 'success',
+        title: msg,
+        showFooter: false,
+        subHeader: h('a', {
+          style: {
+            color: '#3a84ff',
+            textDecoration: 'none',
+            cursor: 'pointer'
+          }
+        })
+      })
+      let num = 1
+      let t = setInterval(() => {
+        if (--num === 0) {
+          clearInterval(t)
+          a.close()
+        }
+      }, 1000)
+    },
     handleSubmit() {
       if (!this.password) {
         this.warningInfoBox('请输入原密码')
@@ -197,53 +244,6 @@ export default {
           this.check_send_code_res = false
         })
     },
-    warningInfoBox(msg) {
-      this.$bkInfo({
-        type: 'warning',
-        title: msg,
-        cancelFn(vm) {
-          console.warn(vm)
-        }
-      })
-    },
-    errorInfoBox(msg) {
-      const a = this.$bkInfo({
-        type: 'error',
-        title: 'Fail:' + msg,
-        subTitle: '窗口2秒后关闭',
-        showFooter: false
-      })
-      let num = 2
-      let t = setInterval(() => {
-        a.subTitle = `此窗口${--num}秒后关闭`
-        if (num === 0) {
-          clearInterval(t)
-          a.close()
-        }
-      }, 1000)
-    },
-    successInfoBox(msg) {
-      const h = this.$createElement
-      const a = this.$bkInfo({
-        type: 'success',
-        title: msg,
-        showFooter: false,
-        subHeader: h('a', {
-          style: {
-            color: '#3a84ff',
-            textDecoration: 'none',
-            cursor: 'pointer'
-          }
-        })
-      })
-      let num = 1
-      let t = setInterval(() => {
-        if (--num === 0) {
-          clearInterval(t)
-          a.close()
-        }
-      }, 1000)
-    }
   }
 }
 </script>

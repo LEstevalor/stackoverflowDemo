@@ -1,6 +1,7 @@
 <template>
   <bk-container class="me-view-container">
-    <bk-main>
+    <div class="flex-container">
+    <bk-main class="custom-main">
       <div class="me-view-card">
         <h1 class="me-view-title">{{ article.title }}</h1>
         <div class="me-view-author">
@@ -8,20 +9,19 @@
             <img class="me-view-picture" :src="avatar"></img>
           </a>
           <div class="me-view-info">
+            <bk-button
+              v-if="this.article.username == this.username"
+              @click="editArticle()"
+              style="position: absolute;right: 80%;"
+              round
+              icon="bk-icon-edit"> 编辑
+            </bk-button>
             <span>{{ article.username }}</span>
             <div class="me-view-meta">
               <span>赞同   {{ article.upvotes }}</span>
               <span>不赞同   {{ article.downvotes }}</span>
             </div>
-
           </div>
-          <bk-button
-            v-if="this.article.username == this.username"
-            @click="editArticle()"
-            style="position: absolute;left: 60%;"
-            round
-            icon="bk-icon-edit"> 编辑
-          </bk-button>
         </div>
 
         <div class="me-view-end">
@@ -40,10 +40,10 @@
               作者：{{ article.username }} | 发布时间：{{ formatDate(article.create_time) }}
             </div>
 
-            <div v-if="this.article.username == this.username">
-              <markdown-editor :editor=article.editor></markdown-editor>
-            </div>
-            <div v-else class="content-container">
+<!--            <div v-if="this.article.username == this.username">-->
+<!--              <markdown-editor :editor=article.editor></markdown-editor>-->
+<!--            </div>-->
+            <div class="content-container">
               <!-- 内容显示给非文章作者 -->
               <div v-html="article.content"></div>
             </div>
@@ -115,12 +115,18 @@
 
       </div>
     </bk-main>
-
+    <bk-aside class="custom-aside">
+      <card-relation class="me-area"></card-relation>
+      <article-scroll-page v-bind="article1"></article-scroll-page>
+    </bk-aside>
+</div>
   </bk-container>
 </template>
 
 <script>
+import CardRelation from '../card/CardRelation'
 import {bkContainer, bkMain, bkButton, bkCol, bkRow, bkInput, bkAside} from 'bk-magic-vue'
+import ArticleScrollPage from '../ArticleScrollPage'
 import MarkdownEditor from './MarkdownEditor'
 import CommmentItem from './CommentItem'
 import {formatDate} from '../../api/time'
@@ -131,9 +137,10 @@ import {host} from "../../../static/js/host";
 export default {
   name: 'articleView',
   component: {
-    bkContainer, bkMain, bkButton, bkCol, bkRow, bkInput, bkAside
+    bkContainer, bkMain, bkButton, bkCol, bkRow, bkInput, bkAside,
   },
   created() {
+    this.article1.query1.article_id = this.$route.params.id
     this.getArticle()
   },
   watch: {
@@ -166,7 +173,12 @@ export default {
       comment: {
         article: {},
         content: ''
-      }
+      },
+      article1: {
+        query1: {
+          article_id: "",
+        }
+      },
     }
   },
   computed: {
@@ -178,6 +190,44 @@ export default {
     }
   },
   methods: {
+    successInfoBox(msg) {
+      const h = this.$createElement
+      const a = this.$bkInfo({
+        type: 'success',
+        title: msg,
+        showFooter: false,
+        subHeader: h('a', {
+          style: {
+            color: '#3a84ff',
+            textDecoration: 'none',
+            cursor: 'pointer'
+          }
+        })
+      })
+      let num = 1
+      let t = setInterval(() => {
+        if (--num === 0) {
+          clearInterval(t)
+          a.close()
+        }
+      }, 1000)
+    },
+    errorInfoBox(msg) {
+      const a = this.$bkInfo({
+        type: 'error',
+        title: 'Fail:' + msg,
+        subTitle: '窗口2秒后关闭',
+        showFooter: false
+      })
+      let num = 2
+      let t = setInterval(() => {
+        a.subTitle = `此窗口${--num}秒后关闭`
+        if (num === 0) {
+          clearInterval(t)
+          a.close()
+        }
+      }, 1000)
+    },
     formatDate(time) {
       return formatDate(time)
     },
@@ -185,11 +235,10 @@ export default {
       this.$router.push({path: `/${type}/${id}`})
     },
     editArticle() {
-      this.$router.push({path: `/write/${this.article.id}`})
+      this.$router.push({path: `/write/${this.article.id}/`})
     },
     getArticle() {
       let that = this
-      console.log("aaa")
       axios.get(host + '/api/v1/questions/get_question/', { // 获取data列表中的数据
         headers: {
           'Authorization': 'Bearer ' + this.token
@@ -219,13 +268,11 @@ export default {
         withCredentials: true // 跨域情况可以携带cookie
       }).then(data => {
         that.comment.content = ''
-        that.comments = data.data.results
+        that.comments.push(data.data)
         that.commentCountsIncrement()
         that.successInfoBox("评论成功")
-        // 刷新当前页面
-        location.reload();
       }).catch(error => {
-        this.errorInfoBox("评论失败")
+        that.errorInfoBox("评论失败")
       })
     },
     commentCountsIncrement() {
@@ -246,7 +293,9 @@ export default {
   },
   components: {
     'commmentz-item': CommmentItem,
-    'markdown-editor': MarkdownEditor
+    'markdown-editor': MarkdownEditor,
+    ArticleScrollPage,
+    'card-relation': CardRelation,
   },
   //组件内的守卫 调整body的背景色
   beforeRouteEnter(to, from, next) {
@@ -257,48 +306,30 @@ export default {
     window.document.body.style.backgroundColor = '#f5f5f5';
     next();
   },
-  errorInfoBox(msg) {
-    const a = this.$bkInfo({
-      type: 'error',
-      title: 'Fail:' + msg,
-      subTitle: '窗口2秒后关闭',
-      showFooter: false
-    })
-    let num = 2
-    let t = setInterval(() => {
-      a.subTitle = `此窗口${--num}秒后关闭`
-      if (num === 0) {
-        clearInterval(t)
-        a.close()
-      }
-    }, 1000)
-  },
-  successInfoBox(msg) {
-    const h = this.$createElement
-    const a = this.$bkInfo({
-      type: 'success',
-      title: msg,
-      showFooter: false,
-      subHeader: h('a', {
-        style: {
-          color: '#3a84ff',
-          textDecoration: 'none',
-          cursor: 'pointer'
-        }
-      })
-    })
-    let num = 1
-    let t = setInterval(() => {
-      if (--num === 0) {
-        clearInterval(t)
-        a.close()
-      }
-    }, 1000)
-  }
 }
 </script>
 
 <style>
+.custom-main {
+  width: 60%; /* 设置宽度为 50% */
+  border-radius: 8px; /* 添加圆角 */
+  box-shadow: 0 4px 6px rgba(9, 9, 9, 0.1); /* 添加阴影 */
+  transition: all 0.3s; /* 添加过渡效果 */
+  margin: 16px; /* 添加一致的边距 */
+}
+
+.custom-aside {
+  width: 40%; /* 设置宽度为 50% */
+  border-radius: 8px; /* 添加圆角 */
+  box-shadow: 0 4px 6px rgba(9, 9, 9, 0.1); /* 添加阴影 */
+  transition: all 0.3s; /* 添加过渡效果 */
+  margin: 16px; /* 添加一致的边距 */
+}
+
+.flex-container {
+  display: flex;
+}
+
 /*非作者文本显示*/
 .article-container {
   max-width: 1200px;

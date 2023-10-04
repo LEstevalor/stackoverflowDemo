@@ -1,7 +1,6 @@
 import logging
 
 from django.shortcuts import get_object_or_404
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.db.transaction import atomic
 from rest_framework import status
@@ -10,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from stackOverFlow.homeapplication.error_codes import error_codes
-from stackOverFlow.homeapplication.models import Question, TagsQuestion, User, QuestionUser
+from stackOverFlow.homeapplication.models import Question, TagsQuestion, QuestionUser
 from stackOverFlow.homeapplication.serializers.questions import (
     QuestionSerializer, QuestionCreateSerializer, QuestionUpdateSerializer, TagsListSerializer,
     QuestionsByTagSerializer, TagsHotListSerializer, TagsSerializer, QuestionUserSerializer,
@@ -38,7 +37,7 @@ class QuestionViewSet(GenericViewSet):
         帖子创建
         """
         try:
-            question = Question.objects.create_question(request=request, validated_data=request.data)
+            question = Question.objects.create_question(validated_data=request.data)
         except Exception:
             logger.exception("问题贴创建失败")
             raise error_codes.QUESTION_CREATE_FAILED
@@ -56,7 +55,7 @@ class QuestionViewSet(GenericViewSet):
         """
         question = get_object_or_404(Question, pk=pk)
         try:
-            Question.objects.update_question(request=request, validated_data=request.data, pk=pk)
+            Question.objects.update_question(validated_data=request.data, pk=pk)
         except Exception:
             logger.exception("问题贴修改失败")
             raise error_codes.QUESTION_UPDATE_FAILED
@@ -93,15 +92,17 @@ class QuestionViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         tags=["问题 Question"],
-        operation_summary="问题搜查"
+        operation_summary="问题搜查",
+        responses={200: QuestionsByTagSerializer()}
     )
     def list(self, request, *args, **kwargs):
         try:
             questions = Question.objects.all_search(request=request)
+            response_serializer = QuestionsByTagSerializer(instance={"results": questions})
         except Exception:
             logger.exception("问题搜查失败")
             raise error_codes.QUESTION_LIST_FAILED
-        return Response(QuestionsByTagSerializer({"results": questions}).data, status=status.HTTP_200_OK)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         tags=["问题 Question"],
@@ -121,7 +122,7 @@ class QuestionViewSet(GenericViewSet):
         tags=["问题 Question"],
         operation_summary="获取相关问题列表"
     )
-    @action(detail=True, methods=["POST"])
+    @action(detail=True, methods=["GET"])
     def get_related_questions(self, request, pk):
         question = get_object_or_404(Question, pk=pk)
         try:
