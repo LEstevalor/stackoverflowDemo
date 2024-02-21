@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from stackOverFlow.homeapplication.models import Question, TagsQuestion, QuestionUser
+from homeapplication.models import Question, TagsQuestion, QuestionUser
 
 
 class QuestionSerializer(serializers.ModelSerializer):

@@ -4,13 +4,12 @@ from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from django.db.transaction import atomic
 from rest_framework import status
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from stackOverFlow.homeapplication.error_codes import error_codes
-from stackOverFlow.homeapplication.models import FollowQuestion, Question, BackQuestion
-from stackOverFlow.homeapplication.serializers.follow_question import (
+from homeapplication.error_codes import error_codes
+from homeapplication.models import FollowQuestion, BackQuestion
+from homeapplication.serializers.follow_question import (
     FollowQuestionSerializer,
     FollowQuestionCreateSerializer
 )

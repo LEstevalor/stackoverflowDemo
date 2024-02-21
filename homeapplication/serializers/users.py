@@ -6,7 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_jwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from stackOverFlow.homeapplication.models import User
+from homeapplication.models import User
 
 
 class MyTokenObtainPairSerializer(TokenObtainSerializer):

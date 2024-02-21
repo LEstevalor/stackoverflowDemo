@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from stackOverFlow.homeapplication.models import FollowQuestion
+from homeapplication.models import FollowQuestion
 
 
 class FollowQuestionSerializer(serializers.ModelSerializer):

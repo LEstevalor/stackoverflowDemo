@@ -8,9 +8,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from stackOverFlow.homeapplication.error_codes import error_codes
-from stackOverFlow.homeapplication.models import Question, TagsQuestion, QuestionUser
-from stackOverFlow.homeapplication.serializers.questions import (
+from homeapplication.error_codes import error_codes
+from homeapplication.models import Question, TagsQuestion, QuestionUser
+from homeapplication.serializers.questions import (
     QuestionSerializer, QuestionCreateSerializer, QuestionUpdateSerializer, TagsListSerializer,
     QuestionsByTagSerializer, TagsHotListSerializer, TagsSerializer, QuestionUserSerializer,
     QuestionUserStatusSerializer, TagsHotSerializer, QuestionTagSerializer,

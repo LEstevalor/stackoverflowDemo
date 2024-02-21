@@ -1,9 +1,6 @@
-from django.db.transaction import atomic
-from django.shortcuts import get_object_or_404
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
 
-from stackOverFlow.homeapplication.models import BackQuestion, Question, BackUser, User
+from homeapplication.models import BackQuestion, Question, BackUser, User
 
 
 class BackQuestionSerializer(serializers.ModelSerializer):

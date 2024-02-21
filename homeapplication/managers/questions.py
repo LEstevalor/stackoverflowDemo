@@ -5,7 +5,7 @@ from django.db.models import Q, ExpressionWrapper, F, IntegerField
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from stackOverFlow.homeapplication.constants.model_constants import BackUserStatus
+from homeapplication.constants.model_constants import BackUserStatus
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class QuestionManager(models.Manager):
     """问题贴管理"""
     def create_question(self, validated_data):
         """创建问题"""
-        from stackOverFlow.homeapplication.models import User, TagsQuestion
+        from homeapplication.models import User, TagsQuestion
         user = User.objects.get(username=validated_data["username"])
         user.question_count += 1
         user.save()
@@ -29,7 +29,7 @@ class QuestionManager(models.Manager):
 
     def update_question(self, validated_data, pk):
         """更新问题"""
-        from stackOverFlow.homeapplication.models import TagsQuestion
+        from homeapplication.models import TagsQuestion
         if validated_data.get("tag"):
             tags_question = TagsQuestion.objects.filter(tag=validated_data["tag"])
             if not tags_question.exists():
@@ -39,7 +39,7 @@ class QuestionManager(models.Manager):
 
     def delete_question(self, request, question):
         """删除帖"""
-        from stackOverFlow.homeapplication.models import User, BackQuestion, FollowQuestion
+        from homeapplication.models import User, BackQuestion, FollowQuestion
         user = User.objects.get(username=request.user.username)
         user.question_count -= 1
         user.save()
@@ -66,7 +66,7 @@ class QuestionManager(models.Manager):
 
     def get_related_questions(self, question, limit=5):
         """相关性分析获取问题列表"""
-        from stackOverFlow.homeapplication.models import Question
+        from homeapplication.models import Question
         all_questions = Question.objects.exclude(id=question.id)
         titles = [question.title] + [q.title for q in all_questions]
         # 标题转换为向量
@@ -82,7 +82,7 @@ class QuestionManager(models.Manager):
 
     def vote_back(self, request, question):
         """赞问题贴"""
-        from stackOverFlow.homeapplication.models import QuestionUser
+        from homeapplication.models import QuestionUser
         back_user = QuestionUser.objects.filter(username=request.user.username, back_question_id=question.id).first()
         # 已经是点赞状态则返回ZERO状态
         if back_user.status == BackUserStatus.UPVOTE.value:
@@ -98,7 +98,7 @@ class QuestionManager(models.Manager):
 
     def down_vote_back(self, request, question):
         """否赞问题贴"""
-        from stackOverFlow.homeapplication.models import QuestionUser
+        from homeapplication.models import QuestionUser
         back_user = QuestionUser.objects.filter(username=request.user.username, back_question_id=question.id).first()
         # 已经是点赞状态则返回ZERO状态
         if back_user.status == BackUserStatus.DOWNVOTE.value:
@@ -116,7 +116,7 @@ class QuestionManager(models.Manager):
 class TagsQuestionManager(models.Manager):
     def list_hot_tag(self, request):
         """获取问题最多的五个标签"""
-        from stackOverFlow.homeapplication.models import Question
+        from homeapplication.models import Question
         tag_list = self.all()
 
         tag_counts = []
@@ -137,7 +137,7 @@ class TagsQuestionManager(models.Manager):
 
     def list_tag_and_count(self, tag):
         """列出标签加贴数"""
-        from stackOverFlow.homeapplication.models import Question
+        from homeapplication.models import Question
         if tag:
             tag_list = self.filter(Q(tag__icontains=tag))
         else:
@@ -154,6 +154,6 @@ class TagsQuestionManager(models.Manager):
 
     def find_single(self, tag):
         """搜索单tag"""
-        from stackOverFlow.homeapplication.models import Question
+        from homeapplication.models import Question
         tag.count = Question.objects.filter(tag=tag.tag).count()
         return tag

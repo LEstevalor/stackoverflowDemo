@@ -1,8 +1,8 @@
 from django.db import models
 
 from stackOverFlow.base import BaseModel
-from stackOverFlow.homeapplication.constants.model_constants import BackUserStatus
-from stackOverFlow.homeapplication.managers.questions import QuestionManager, TagsQuestionManager
+from homeapplication.constants.model_constants import BackUserStatus
+from homeapplication.managers.questions import QuestionManager, TagsQuestionManager
 
 
 class TagsQuestion(BaseModel):

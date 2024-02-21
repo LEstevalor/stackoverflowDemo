@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
-from stackOverFlow import homeapplication
+import homeapplication
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 自定义APP
-    'stackOverFlow.homeapplication.apps.HomeapplicationConfig',
+    'homeapplication.apps.HomeapplicationConfig',
     # 第三方
     'rest_framework',  # DRF架构
     'corsheaders',  # 解决跨域CORS
@@ -65,7 +66,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'stackOverFlow.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
@@ -141,7 +142,7 @@ SIMPLE_JWT = {
 
 # 修改默认的认证后端
 AUTHENTICATION_BACKENDS = [
-    'stackOverFlow.homeapplication.auth.MyAuthBackend',
+    'homeapplication.auth.MyAuthBackend',
 ]
 
 # 配置自定义用户表MyUser（<app_name>.<model_name>）

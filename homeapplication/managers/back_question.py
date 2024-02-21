@@ -3,7 +3,7 @@ import logging
 from django.db import models
 from django.db.models import ExpressionWrapper, F, IntegerField
 
-from stackOverFlow.homeapplication.constants.model_constants import BackUserStatus
+from homeapplication.constants.model_constants import BackUserStatus
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ class BackQuestionManager(models.Manager):
     """回贴管理"""
     def create_back_question(self, request, validated_data):
         """创建回帖"""
-        from stackOverFlow.homeapplication.models import User
+        from homeapplication.models import User
         user = User.objects.get(username=validated_data["username"])
         user.back_question += 1
         user.save()
@@ -24,7 +24,7 @@ class BackQuestionManager(models.Manager):
 
     def delete_back_question(self, request, back_question):
         """删除回帖"""
-        from stackOverFlow.homeapplication.models import User, FollowQuestion
+        from homeapplication.models import User, FollowQuestion
         user = User.objects.get(username=request.user.username)
         user.back_question -= 1
         user.save()
@@ -41,7 +41,7 @@ class BackQuestionManager(models.Manager):
 
     def vote_back(self, request, back_question):
         """赞贴"""
-        from stackOverFlow.homeapplication.models import User, BackUser
+        from homeapplication.models import BackUser
         back_user = BackUser.objects.filter(username=request.user.username, back_question_id=back_question.id).first()
         # 已经是点赞状态则返回ZERO状态
         if back_user.status == BackUserStatus.UPVOTE.value:
@@ -57,7 +57,7 @@ class BackQuestionManager(models.Manager):
 
     def down_vote_back(self, request, back_question):
         """否贴"""
-        from stackOverFlow.homeapplication.models import BackUser
+        from homeapplication.models import BackUser
         back_user = BackUser.objects.filter(username=request.user.username, back_question_id=back_question.id).first()
         # 已经是点赞状态则返回ZERO状态
         if back_user.status == BackUserStatus.DOWNVOTE.value:

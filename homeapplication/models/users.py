@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from stackOverFlow.homeapplication.managers.users import UserManager
+from homeapplication.managers.users import UserManager
 
 
 class User(AbstractUser):

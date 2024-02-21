@@ -5,17 +5,15 @@ from drf_yasg.utils import swagger_auto_schema
 from django.db.transaction import atomic
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from stackOverFlow.homeapplication.error_codes import error_codes
-from stackOverFlow.homeapplication.models import BackQuestion, Question, BackUser
-from stackOverFlow.homeapplication.serializers.back_question import (
+from homeapplication.error_codes import error_codes
+from homeapplication.models import BackQuestion, BackUser
+from homeapplication.serializers.back_question import (
     BackQuestionSerializer, BackQuestionCreateSerializer, BackQuestionUpdateSerializer, BackUserSerializer,
     BackListSerializer, BackUserStatusSerializer
 )
-from stackOverFlow.homeapplication.utils import disable_actions
 
 logger = logging.getLogger(__name__)
 

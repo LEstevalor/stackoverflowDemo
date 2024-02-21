@@ -9,7 +9,7 @@ class FollowQuestionManager(models.Manager):
     """跟帖管理"""
     def create_follow_question(self, request, validated_data):
         """创建跟帖"""
-        from stackOverFlow.homeapplication.models import User
+        from homeapplication.models import User
         user = User.objects.get(username=request.user.username)
         user.follow_question += 1
         user.save()
@@ -18,7 +18,7 @@ class FollowQuestionManager(models.Manager):
 
     def delete_follow_question(self, request, back_question):
         """删除跟帖"""
-        from stackOverFlow.homeapplication.models import User
+        from homeapplication.models import User
         user = User.objects.get(username=request.user.username)
         user.follow_question -= 1
         user.save()

@@ -13,14 +13,14 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.views import TokenViewBase
 
-from stackOverFlow.homeapplication.error_codes import error_codes
-from stackOverFlow.homeapplication.models import User
-from stackOverFlow.homeapplication.serializers.users import (
+from homeapplication.error_codes import error_codes
+from homeapplication.models import User
+from homeapplication.serializers.users import (
     MyTokenObtainPairSerializer,
     CreateUserSerializer,
     UserSerializer, UserDetailSerializer
 )
-from stackOverFlow.homeapplication.utils import is_valid_email
+from homeapplication.utils import is_valid_email
 
 logger = logging.getLogger(__name__)
 

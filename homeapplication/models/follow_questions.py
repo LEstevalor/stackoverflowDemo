@@ -1,7 +1,7 @@
 from django.db import models
 
 from stackOverFlow.base import BaseModel
-from stackOverFlow.homeapplication.managers.follow_question import FollowQuestionManager
+from homeapplication.managers.follow_question import FollowQuestionManager
 
 
 class FollowQuestion(BaseModel):
