@@ -1,6 +1,6 @@
 from django.db import models
 
-from stackOverFlow.base import BaseModel
+from homeapplication.base import BaseModel
 from homeapplication.managers.follow_question import FollowQuestionManager
 
 

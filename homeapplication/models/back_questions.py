@@ -1,6 +1,6 @@
 from django.db import models
 
-from stackOverFlow.base import BaseModel
+from homeapplication.base import BaseModel
 from homeapplication.constants.model_constants import BackUserStatus
 from homeapplication.managers.back_question import BackQuestionManager
 
